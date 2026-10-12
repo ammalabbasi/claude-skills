@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="generator" content="html-report">
 <meta name="html-report-type" content="update">
-<title>readsieve project update</title>
+<title>Example project project update</title>
 <style>
   /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
   :root { color-scheme: light;
@@ -160,9 +160,9 @@
 </head>
 <body><main>
 
-<h1>readsieve — what changed in v1.1.0, and what it does to the results</h1>
+<h1>Example project — what changed in v1.1.0, and what it does to the results</h1>
 <p class="meta">Update for the steering group · detail by item in the <a href="2026-09-15_status.html">15 Sep status report</a> &middot; 2026-09-16</p>
-<div class="demo">Example report. The project (readsieve), the reviewer and every number are invented.</div>
+<div class="demo">Example report. The project, the reviewer and every number are invented.</div>
 <div class="note ok"><b>In one paragraph.</b> All review findings are fixed and v1.1.0 is tagged. The one change that moves results is the read-pairing fix: on the 40-sample pilot it moves 3 samples up one tier and none down. Everything else is provenance and usability. Thread scaling beyond 16 cores is still being measured. <b>I need a decision on the default minimum read length.</b></div>
 <h2>A. Changes to the tool</h2>
 <ul><li><b>Pairing (R3):</b> mates split across processing chunks are rejoined; 4% more reads kept on average.</li><li><b>Provenance (R2):</b> the host index checksum is recorded and checked on every run.</li><li><b>Usability (R4, R6):</b> <code>--threads</code> flag; install steps tested in a clean container.</li></ul>
@@ -173,6 +173,6 @@
 <div class="tiles"><div class="tile info"><div class="n">$42</div><div class="l">pilot rerun, compute at list price</div></div><div class="tile info"><div class="n">5.5 h</div><div class="l">wall time, 40 samples</div></div></div>
 <h2>D. Still open or deferred</h2><ul><li>Thread scaling beyond 16 cores (S3), results by 17 Sep.</li><li>Docker image, after v1.2.</li></ul>
 <h2>What I need from you</h2><ol class="asks"><li><b>Choose the default minimum read length: 50 or 70 bp.</b> 50 keeps 6% more reads; 70 halves the false-positive rate on simulated data. I recommend 70.</li></ol>
-<footer>Generated 2026-09-16 for readsieve.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<footer>Generated 2026-09-16 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>

@@ -50,21 +50,24 @@ def test_every_example_builds_and_passes(examples):
 def test_status_tiles_are_counted_from_items(examples):
     s = (examples / "2026-09-15_status.html").read_text()
     tiles = dict(re.findall(r'data-status="(\w+)"><div class="n">(\d+)<', s))
-    assert tiles == {"fixed": "6", "done": "2", "open": "1"}
+    assert tiles == {"fixed": "6", "open": "1", "wontdo": "1"}
+
+
+def test_status_has_one_table_per_source(examples):
+    s = (examples / "2026-09-15_status.html").read_text()
+    assert s.count("<table") == 2
+    assert "<h2>Your 10 Sep follow-up (S1–S3)</h2>" in s
 
 
 def test_changed_rows_are_marked_against_previous_round(examples):
     s = (examples / "2026-09-15_status.html").read_text()
     changed = re.findall(r'<tr class="changed"><td[^>]*>(\w+)', s)
-    assert sorted(changed) == ["R3", "R4", "R5", "S1", "S2", "S3"]
+    assert sorted(changed) == ["R3", "R4", "S1", "S2", "S3"]
 
 
-def test_ledger_lists_attention_items_and_reads_tsv(examples):
-    s = (examples / "2026-09-20_ledger.html").read_text()
-    box = s[s.index('<div class="attn">'):]
-    for i in ("S3", "E1", "E2"):
-        assert f"<b>{i}</b>" in box
-    assert "Needs attention (3)" in box
+def test_only_four_statuses(tmp_path):
+    with pytest.raises(SystemExit):
+        build(tmp_path, {"type": "status", "title": "a b", "sources": [{"name": "s", "items": [{"id": "1", "status": "deferred"}]}]})
 
 
 def test_text_is_escaped_and_markdown_applied():
@@ -72,15 +75,9 @@ def test_text_is_escaped_and_markdown_applied():
     assert report.md("[x](y.html)") == '<a href="y.html">x</a>'
 
 
-def test_unknown_status_is_rejected(tmp_path):
-    with pytest.raises(SystemExit):
-        build(tmp_path, {"type": "status", "title": "a b", "sections": [{"title": "s", "items": [{"id": "1", "status": "kinda"}]}]})
-
-
 def test_skeletons_fail_until_filled(tmp_path):
     for t in report.TYPES:
         spec = yaml.safe_load((ROOT / "skills/html-report/skeletons" / f"{t}.yaml").read_text())
-        spec.pop("items_tsv", None)
         out = build(tmp_path, spec, t)
         assert any("REPLACE" in f for f in fails(out)), t
 

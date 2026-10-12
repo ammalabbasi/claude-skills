@@ -162,7 +162,7 @@
 
 <h1>Does the read-pairing fix change results on the pilot?</h1>
 <p class="meta">answers S1 and R3 · code at <code>e5f6a7b</code> &middot; 2026-09-14</p>
-<div class="demo">Example report. The project (readsieve), the reviewer and every number are invented.</div>
+<div class="demo">Example report. The project, the reviewer and every number are invented.</div>
 <div class="tiles"><div class="tile ok"><div class="n">3 / 40</div><div class="l">samples up one tier</div></div><div class="tile bad"><div class="n">0</div><div class="l">samples down a tier</div></div><div class="tile info"><div class="n">+4.1%</div><div class="l">median reads kept per sample</div></div></div>
 <div class="note "><b>The fix recovers mates in every sample and moves 3 of 40 up one tier, none down.</b> The gain is largest for short-insert libraries, as the mechanism predicts. The thresholds hold; no rerun of later steps is needed beyond the 3 samples that changed tier.</div>
 <h2>What was tested</h2>
@@ -177,8 +177,8 @@
 <ul><li>Old tiers recompute identically from the stored counts: 40 / 40.</li><li>Read totals before extraction are unchanged: 40 / 40.</li></ul>
 <h2>Caveats and what follows</h2>
 <ul><li><b>Caveat:</b> the pilot has few long-insert libraries (9); the effect there is small but less certain.</li><li><b>Next:</b> freeze the fix (done in v1.1.0) and rerun the 3 changed samples downstream.</li></ul>
-<details><summary>Methods, commands and paths</summary><pre><code>readsieve run --input pilot40.tsv --out runs/pairing_fix/
+<details><summary>Methods, commands and paths</summary><pre><code>Example project run --input pilot40.tsv --out runs/pairing_fix/
 python compare_tiers.py runs/v1.0.0 runs/pairing_fix &gt; tiers.tsv</code></pre></details>
-<footer>Generated 2026-09-14 for readsieve.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<footer>Generated 2026-09-14 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>

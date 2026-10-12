@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="generator" content="html-report">
 <meta name="html-report-type" content="status">
-<title>readsieve code review status</title>
+<title>Example review status</title>
 <style>
   /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
   :root { color-scheme: light;
@@ -160,39 +160,28 @@
 </head>
 <body><main>
 
-<h1>readsieve — code review status</h1>
-<p class="meta">Your 25 Aug review (R1–R6) and 10 Sep follow-up (S1–S3) · branch <code>fix/review-1</code> at <code>d4e5f6a</code>, merged into <code>main</code>, tagged <code>v1.1.0</code> · supersedes the 1 Sep attachment &middot; status as of 2026-09-15</p>
-<div class="demo">Example report. The project (readsieve), the reviewer and every number are invented.</div>
-<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">6</div><div class="l">fixed: S2, R1, R2, R3, R4, R5</div></div>
-<div class="tile ok" data-status="done"><div class="n">2</div><div class="l">done: S1, R6</div></div>
-<div class="tile bad" data-status="open"><div class="n">1</div><div class="l">open: S3</div></div>
-<div class="tile chg"><div class="n">6</div><div class="l">changed since 2026-09-01</div></div>
-<div class="tile ok"><div class="n">268</div><div class="l">tests, from 212 on 1 Sep</div></div></div>
-<div class="note "><b>All six original findings are closed and v1.1.0 is tagged; the pairing fix moves 3 of 40 pilot samples up one tier, none down.</b> You asked in S1 for the rerun before freezing the pairing fix; it is clean and written up in the <a href="2026-09-14_pairing_findings.html">pairing findings</a>. One item is still open (S3, thread scaling on the cluster).</div>
-<h2>Your 10 Sep follow-up <span class="cnt">S1–S3</span></h2>
-<div class="key"><span><i style="background:var(--bad)"></i>P0 / critical</span><span><i style="background:var(--chg)"></i>P1 / high</span><span><span class="chg-mark">&#9679;</span> changed since 2026-09-01</span></div>
-<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What was done, and how it was verified</th><th>Status</th></tr></thead><tbody>
-<tr class="changed"><td class="id bad" data-label="ID">S1 <span class="chg-mark">&#9679;</span><span class="sev">P0</span></td><td data-label="Asked">Rerun the 40-sample pilot with the pairing fix before freezing it.</td><td data-label="Done">40 / 40 complete; 3 up one tier, 0 down; mates recovered in every sample. <span class="more">&rarr; <a href="2026-09-14_pairing_findings.html">pairing findings</a></span></td><td class="st" data-label="Status"><span class="pill ok" data-status="done">Done</span></td></tr>
-<tr class="changed"><td class="id" data-label="ID">S2 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Add the orphan-read count to the QC table.</td><td data-label="Done">Column <code>orphans_kept</code> added; shown in the cohort report.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>d4e5f6a</code></td></tr>
-<tr class="changed"><td class="id" data-label="ID">S3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Check thread scaling beyond 16 cores.</td><td data-label="Done">Benchmark queued on the 64-core node.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+<h1>Example project — status of your review</h1>
+<p class="meta">Your 25 Aug review (R1–R5) and 10 Sep follow-up (S1–S3) · commit <code>d4e5f6a</code> &middot; 2026-09-15</p>
+<div class="demo">Example. The project, the reviewer and every number are invented.</div>
+<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">6</div><div class="l">fixed</div></div>
+<div class="tile bad" data-status="open"><div class="n">1</div><div class="l">open</div></div>
+<div class="tile park" data-status="wontdo"><div class="n">1</div><div class="l">won&#x27;t do</div></div></div>
+<div class="note"><b>Bottom line.</b> Everything from your first review is closed. The pilot rerun you asked for is clean (3 of 40 samples up one tier, none down); one item is still open.</div>
+<p class="muted"><span class="chg-mark">&#9679;</span> = changed since your 2026-09-01 report</p>
+<h2>Your 10 Sep follow-up (S1–S3)</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr class="changed"><td class="id" data-label="ID">S1 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Rerun the 40-sample pilot before freezing the pairing fix.</td><td data-label="Did">40 / 40 done; 3 up one tier, 0 down.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">S2 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Show unpaired-read counts in the QC table.</td><td data-label="Did">Added as a column.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>d4e5f6a</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">S3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Check speed beyond 16 cores.</td><td data-label="Did">Benchmark queued.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
 </tbody></table></div>
-<h2>Your 25 Aug review <span class="cnt">R1–R6</span></h2>
-<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What was done, and how it was verified</th><th>Status</th></tr></thead><tbody>
-<tr><td class="id bad" data-label="ID">R1<span class="sev">P0</span></td><td data-label="Asked">Unpaired reads are silently dropped at extraction.</td><td data-label="Done">Unpaired reads now kept and counted; regression test on a synthetic BAM with 10% orphans.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a1b2c3d</code></td></tr>
-<tr><td class="id bad" data-label="ID">R2<span class="sev">P0</span></td><td data-label="Asked">Host index version is not recorded.</td><td data-label="Done">Index checksum written to the run report; run stops on mismatch.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b2c3d4e</code></td></tr>
-<tr class="changed"><td class="id chg" data-label="ID">R3 <span class="chg-mark">&#9679;</span><span class="sev">P1</span></td><td data-label="Asked">Paired reads split across chunks lose their mate.</td><td data-label="Done">Fixed and validated on the 40-sample pilot (S1).</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>e5f6a7b</code></td></tr>
-<tr class="changed"><td class="id" data-label="ID">R4 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Thread count is hardcoded.</td><td data-label="Done"><code>--threads</code> flag, default from the scheduler allocation.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f6a7b8c</code></td></tr>
-<tr class="changed"><td class="id" data-label="ID">R5 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Legacy TSV output duplicates the JSON.</td><td data-label="Done">Kept behind <code>--legacy-tsv</code>, off by default, as you decided on 3 Sep.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f6a7b8c</code></td></tr>
-<tr><td class="id" data-label="ID">R6</td><td data-label="Asked">README install steps are out of date.</td><td data-label="Done">Rewritten and tested in a clean container.</td><td class="st" data-label="Status"><span class="pill ok" data-status="done">Done</span><br><code>c3d4e5f</code></td></tr>
+<h2>Your 25 Aug review (R1–R5)</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr><td class="id" data-label="ID">R1</td><td data-label="Asked">Unpaired reads are silently dropped.</td><td data-label="Did">Now kept and counted; tested on a file with 10% unpaired reads.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a1b2c3d</code></td></tr>
+<tr><td class="id" data-label="ID">R2</td><td data-label="Asked">The reference version is not recorded.</td><td data-label="Did">Recorded in every run report; a mismatch stops the run.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b2c3d4e</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">R3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Paired reads split across chunks lose their mate.</td><td data-label="Did">Fixed; confirmed by the pilot rerun (S1).</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>e5f6a7b</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">R4 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Thread count is hardcoded.</td><td data-label="Did">Now a setting, defaulting to what the job was given.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f6a7b8c</code></td></tr>
+<tr><td class="id" data-label="ID">R5</td><td data-label="Asked">Drop the old TSV output.</td><td data-label="Did">Two downstream scripts still read it; keeping it.</td><td class="st" data-label="Status"><span class="pill park" data-status="wontdo">Won't do</span></td></tr>
 </tbody></table></div>
-<h2>What is running now</h2><ul><li>Thread-scaling benchmark (S3), 8 / 16 / 32 / 64 cores on 4 synthetic samples; results by 17 Sep.</li></ul>
-<h2>Outside your numbered list <span class="cnt">items not yet confirmed, and what else I found</span></h2>
-<div class="tw"><table class="stack"><thead><tr><th>What you flagged, or what I found</th><th>Where it stands</th><th>Status</th></tr></thead><tbody>
-<tr><td data-label="Item">Dead code: <code>legacy_merge()</code> is never called.</td><td data-label="Where">Removal ready; holding until after v1.1.0.</td><td class="st" data-label="Status"><span class="pill park">Deferred</span></td></tr>
-<tr><td data-label="Item">Found while testing: the progress bar miscounts gzip input.</td><td data-label="Where">Cosmetic; fix in the next minor release.</td><td class="st" data-label="Status"><span class="pill bad">Open</span></td></tr>
-</tbody></table></div>
-<details><summary>Commands and paths</summary><pre><code>pytest -q                     # 268 passed
-git log --oneline v1.0.0..v1.1.0 | wc -l   # 14</code></pre></details>
-<footer>Generated 2026-09-15 for readsieve.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<footer>Generated 2026-09-15 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>

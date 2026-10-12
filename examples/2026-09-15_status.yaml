@@ -1,34 +1,22 @@
 type: status
-title: readsieve code review status
-heading: readsieve — code review status
-project: readsieve
+title: Example review status
+heading: Example project — status of your review
+project: Example project
 date: 2026-09-15
+context: Your 25 Aug review (R1–R5) and 10 Sep follow-up (S1–S3) · commit `d4e5f6a`
 previous: 2026-09-01_status.yaml
-meta: Your 25 Aug review (R1–R6) and 10 Sep follow-up (S1–S3) · branch `fix/review-1` at `d4e5f6a`, merged into `main`, tagged `v1.1.0` · supersedes the 1 Sep attachment
-demo: "Example report. The project (readsieve), the reviewer and every number are invented."
-tests: {now: 268, before: 212, since: 1 Sep}
-summary:
-  headline: All six original findings are closed and v1.1.0 is tagged; the pairing fix moves 3 of 40 pilot samples up one tier, none down.
-  body: You asked in S1 for the rerun before freezing the pairing fix; it is clean and written up in the [pairing findings](2026-09-14_pairing_findings.html). One item is still open (S3, thread scaling on the cluster).
-sections:
-  - title: Your 10 Sep follow-up
-    sub: S1–S3
+demo: "Example. The project, the reviewer and every number are invented."
+bottom_line: Everything from your first review is closed. The pilot rerun you asked for is clean (3 of 40 samples up one tier, none down); one item is still open.
+sources:
+  - name: Your 10 Sep follow-up (S1–S3)
     items:
-      - {id: S1, priority: P0, asked: "Rerun the 40-sample pilot with the pairing fix before freezing it.", done: "40 / 40 complete; 3 up one tier, 0 down; mates recovered in every sample.", status: done, link: "[pairing findings](2026-09-14_pairing_findings.html)"}
-      - {id: S2, asked: "Add the orphan-read count to the QC table.", done: "Column `orphans_kept` added; shown in the cohort report.", status: fixed, commit: d4e5f6a}
-      - {id: S3, asked: "Check thread scaling beyond 16 cores.", done: "Benchmark queued on the 64-core node.", status: open}
-  - title: Your 25 Aug review
-    sub: R1–R6
+      - {id: S1, asked: "Rerun the 40-sample pilot before freezing the pairing fix.", done: "40 / 40 done; 3 up one tier, 0 down.", status: fixed}
+      - {id: S2, asked: "Show unpaired-read counts in the QC table.", done: "Added as a column.", status: fixed, commit: d4e5f6a}
+      - {id: S3, asked: "Check speed beyond 16 cores.", done: "Benchmark queued.", status: open}
+  - name: Your 25 Aug review (R1–R5)
     items:
-      - {id: R1, priority: P0, asked: "Unpaired reads are silently dropped at extraction.", done: "Unpaired reads now kept and counted; regression test on a synthetic BAM with 10% orphans.", status: fixed, commit: a1b2c3d}
-      - {id: R2, priority: P0, asked: "Host index version is not recorded.", done: "Index checksum written to the run report; run stops on mismatch.", status: fixed, commit: b2c3d4e}
-      - {id: R3, priority: P1, asked: "Paired reads split across chunks lose their mate.", done: "Fixed and validated on the 40-sample pilot (S1).", status: fixed, commit: e5f6a7b}
-      - {id: R4, asked: "Thread count is hardcoded.", done: "`--threads` flag, default from the scheduler allocation.", status: fixed, commit: f6a7b8c}
-      - {id: R5, asked: "Legacy TSV output duplicates the JSON.", done: "Kept behind `--legacy-tsv`, off by default, as you decided on 3 Sep.", status: fixed, commit: f6a7b8c}
-      - {id: R6, asked: "README install steps are out of date.", done: "Rewritten and tested in a clean container.", status: done, commit: c3d4e5f}
-running:
-  - Thread-scaling benchmark (S3), 8 / 16 / 32 / 64 cores on 4 synthetic samples; results by 17 Sep.
-outside:
-  - {item: "Dead code: `legacy_merge()` is never called.", where: "Removal ready; holding until after v1.1.0.", status: deferred}
-  - {item: "Found while testing: the progress bar miscounts gzip input.", where: "Cosmetic; fix in the next minor release.", status: open}
-methods: {summary: Commands and paths, code: "pytest -q                     # 268 passed\ngit log --oneline v1.0.0..v1.1.0 | wc -l   # 14"}
+      - {id: R1, asked: "Unpaired reads are silently dropped.", done: "Now kept and counted; tested on a file with 10% unpaired reads.", status: fixed, commit: a1b2c3d}
+      - {id: R2, asked: "The reference version is not recorded.", done: "Recorded in every run report; a mismatch stops the run.", status: fixed, commit: b2c3d4e}
+      - {id: R3, asked: "Paired reads split across chunks lose their mate.", done: "Fixed; confirmed by the pilot rerun (S1).", status: fixed, commit: e5f6a7b}
+      - {id: R4, asked: "Thread count is hardcoded.", done: "Now a setting, defaulting to what the job was given.", status: fixed, commit: f6a7b8c}
+      - {id: R5, asked: "Drop the old TSV output.", done: "Two downstream scripts still read it; keeping it.", status: wontdo}

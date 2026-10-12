@@ -40,12 +40,12 @@ Claude hands back the path to the HTML file. Read it, then attach it yourself.
 
 | Type | For | Example |
 |---|---|---|
-| `status` | Answering a reviewer's numbered asks, in their numbering. Tiles are counted from the items. Rows that changed since the last round's spec get a ●. `mode: ledger` gives a cumulative view with a "needs attention" box. | [round 1](examples/2026-09-01_status.html) · [round 2](examples/2026-09-15_status.html) · [ledger](examples/2026-09-20_ledger.html) |
+| `status` | **"Did you do what I asked?"** Sent after a round of fixes. One table per document the reviewer sent, in their numbering; Fixed / In progress / Open / Won't do; ● marks what changed since last time. | [round 1](examples/2026-09-01_status.html) · [round 2](examples/2026-09-15_status.html) |
 | `findings` | One experiment or validation: what was tested, the results (tables and bar charts), sanity checks, caveats | [pairing fix](examples/2026-09-14_pairing_findings.html) |
 | `update` | A narrative across topics, ending in "What I need from you". With a `tabs` block it becomes the **multi-area email update**: one tab per area, each self-contained, with its asks at the foot. | [v1.1 update](examples/2026-09-16_update.html) · [tabbed weekly update](examples/2026-09-19_lab_update.html) |
 | `brief` | One screen for people outside the project | [committee brief](examples/2026-09-17_brief.html) |
 
-The examples are about an invented tool (*readsieve*), and every number in them is made up. GitHub shows
+The examples use an invented "Example project"; every number in them is made up. GitHub shows
 HTML as source code, so to see them rendered, either clone the repo and open `examples/index.html`, or
 turn on GitHub Pages for the repo (Settings → Pages → deploy from `main`, root folder) and go to
 `https://ammalabbasi.github.io/claude-skills/examples/`.
@@ -63,11 +63,10 @@ python3 $S/check_report.py 2026-10-12_benchmark_findings.html
 The YAML is short. Here is a whole status item:
 
 ```yaml
-- {id: R3, priority: P1, asked: "Mates lost across chunks.", done: "Fixed; validated on the pilot.", status: fixed, commit: e5f6a7b}
+- {id: R3, asked: "Paired reads lose their mate.", done: "Fixed; confirmed by the pilot rerun.", status: fixed, commit: e5f6a7b}
 ```
 
-Long status lists can live in a TSV instead (`items_tsv: items.tsv`), for example one exported from a
-tracking spreadsheet. The full spec reference is in [`SKILL.md`](skills/html-report/SKILL.md).
+The full spec reference is in [`SKILL.md`](skills/html-report/SKILL.md).
 
 ### What `check_report.py` checks
 

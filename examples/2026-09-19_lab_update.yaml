@@ -1,17 +1,17 @@
 type: update
 title: Weekly lab update
 heading: Update — 19 September 2026
-project: readsieve and lab infrastructure
+project: Example project and lab infrastructure
 date: 2026-09-19
 meta: One tab per area; each is self-contained, and the decisions I need are at the foot of each.
-demo: "Example report. The project (readsieve), the reviewer and every number are invented."
+demo: "Example report. The project, the reviewer and every number are invented."
 summary: >-
-  readsieve v1.1.0 is released and validated. The cloud read-extraction method costs $0.63 per sample, 12× less than
+  Example project v1.1.0 is released and validated. The cloud read-extraction method costs $0.63 per sample, 12× less than
   moving whole files. Two decisions are waiting on you: the full-cohort spend (tab 2) and the default read length (tab 1).
 blocks:
   - tabs:
-      - label: readsieve release
-        heading: "readsieve v1.1.0: released, one result change"
+      - label: Example project release
+        heading: "Example project v1.1.0: released, one result change"
         summary: All review findings are closed; the pairing fix moves 3 of 40 pilot samples up one tier.
         blocks:
           - tiles:

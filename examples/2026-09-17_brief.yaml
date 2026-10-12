@@ -1,10 +1,10 @@
 type: brief
-title: readsieve status brief
-heading: readsieve — release 1.1 is out, one decision pending
-project: readsieve
+title: Example project status brief
+heading: Example project — release 1.1 is out, one decision pending
+project: Example project
 date: 2026-09-17
 meta: For the department research committee
-demo: "Example report. The project (readsieve), the reviewer and every number are invented."
+demo: "Example report. The project, the reviewer and every number are invented."
 tiles:
   - {n: "8 / 9", label: review findings closed, kind: ok}
   - {n: "3 / 40", label: pilot samples up one tier, kind: info}

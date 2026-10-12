@@ -1,6 +1,6 @@
 ---
 name: html-report
-description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status (answers their numbered asks, in their numbering, tiles counted from the items), findings (one experiment or validation written up end to end), update (narrative across topics, ending in asks), brief (one screen for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
+description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status ("did you do what I asked?" — one table per document the reviewer sent, in their numbering), findings (one experiment or validation written up end to end), update (narrative across topics, ending in asks), brief (one screen for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
 ---
 
 # html-report
@@ -17,7 +17,7 @@ identifier patterns (`$HTML_REPORT_PATTERNS`). Local rules override this file wh
 
 | Type | Answers | Use when |
 |---|---|---|
-| `status` | "Where does each thing I asked for stand?" | The reader sent numbered findings, conditions or asks. `mode: round` for this round; `mode: ledger` for everything ever asked, with a "needs attention" box. |
+| `status` | "Did you do what I asked?" | After a round of fixes, back to the person who gave you the list. One table per document they sent, in their numbering. |
 | `findings` | "What did that experiment show?" | One question with a measured answer. A status row that needs more than a paragraph links to one of these instead of growing. |
 | `update` | "What changed, and what do you need from me?" | Several topics, a reader who has not read the tables, or a decision needed. |
 | `brief` | "Where are we, in one screen?" | Readers outside the project: a committee, a funder, a PI's collaborator. ≤4 tiles, ~450 words. |
@@ -29,7 +29,7 @@ Do not mix them: an analysis bolted onto a status report is a `findings` report 
 ```bash
 S=<this skill dir>/scripts
 python3 $S/report.py init --type status -o 2026-10-12_status.yaml   # skeleton with REPLACE markers
-#   fill it in; for status, items can come from a TSV (items_tsv:) kept alongside the work
+#   fill it in
 python3 $S/report.py build 2026-10-12_status.yaml                   # -> 2026-10-12_status.html
 python3 $S/check_report.py 2026-10-12_status.html                   # must exit 0 before handing over
 ```
@@ -62,12 +62,11 @@ Common keys: `type`, `title` (2–6 words, the browser tab), `heading` (the `<h1
 
 Text fields take `**bold**`, `*italic*`, `` `code` ``, `[text](url)`; everything else is escaped.
 
-**status:** `mode` (`round`|`ledger`), `previous` (last round's spec → ● on changed rows + a tile),
-`tests` (`{now, before, since}`), `sections` (`{title, sub, intro, items}`), `items_tsv`
-(columns `section id priority asked done status commit link`), `columns` (rename headers), `running`,
-`outside` (`{item, where, status}`), `discrepancies`.
-Statuses: `fixed done validated answered progress decision open failed notfound deferred`.
-Priorities colour the ID cell: `P0`/`critical` red, `P1`/`high` orange.
+**status** — kept deliberately small: `context` (one line: which review, which commit), `bottom_line`,
+`previous` (last round's file → ● on rows that changed), and `sources`, one per document they sent:
+`{name, items: [{id, asked, done, status, commit}]}`. Statuses: `fixed`, `progress`, `open`, `wontdo`.
+Count boxes are computed from the items. Nothing else; if a result needs more than a line, write a
+`findings` report and link it from `done`.
 
 **update:** `summary` as a plain string becomes the "In one paragraph" box; `h2` blocks are lettered
 A., B., …; `open`, `asks` (`{ask, detail}`). **brief:** `changed`, `next`, `asks`.

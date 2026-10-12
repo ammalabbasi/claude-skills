@@ -17,28 +17,19 @@ import yaml
 SKILL = pathlib.Path(__file__).resolve().parent.parent
 TYPES = ("status", "findings", "update", "brief")
 
-# status key -> (pill class, pill label, tile label). Order here is tile order.
+# status key -> (pill class, label). Order here is tile order.
 STATUS = {
-    "fixed":     ("ok",   "Fixed",          "fixed"),
-    "done":      ("ok",   "Done",           "done"),
-    "validated": ("info", "Validated",      "validated"),
-    "answered":  ("info", "Answered",       "answered by analysis"),
-    "progress":  ("chg",  "In progress",    "in progress"),
-    "decision":  ("dec",  "Needs decision", "need your decision"),
-    "open":      ("bad",  "Open",           "open"),
-    "failed":    ("bad",  "Failed",         "failed"),
-    "notfound":  ("nf",   "Not found",      "asked for, not found in code"),
-    "deferred":  ("park", "Deferred",       "deferred"),
+    "fixed":    ("ok",   "Fixed"),
+    "progress": ("chg",  "In progress"),
+    "open":     ("bad",  "Open"),
+    "wontdo":   ("park", "Won't do"),
 }
-ALIASES = {"inprogress": "progress", "wip": "progress", "needsdecision": "decision", "pass": "done",
-           "notfoundincode": "notfound", "parked": "deferred", "fail": "failed"}
-ATTENTION = ("open", "failed", "notfound", "decision")
-PRIORITY = {"p0": "bad", "critical": "bad", "p1": "chg", "high": "chg"}
+ALIASES = {"done": "fixed", "inprogress": "progress", "wip": "progress", "wontfix": "wontdo", "won'tdo": "wontdo"}
 PRIVACY = "Contains no patient data, no sample identifiers and no file contents."
 TOP_KEYS = {"type", "title", "heading", "project", "date", "meta", "audience", "tiles", "summary", "blocks",
             "footer", "privacy", "methods", "demo", "lettered",
             # status
-            "mode", "previous", "tests", "sections", "items_tsv", "columns", "outside", "running", "discrepancies",
+            "context", "bottom_line", "previous", "sources",
             # update / brief
             "open", "asks", "changed", "next"}
 
@@ -75,7 +66,7 @@ def status_key(raw):
 
 def pill(raw, counted=True):
     k = status_key(raw)
-    cls, label, _ = STATUS[k]
+    cls, label = STATUS[k]
     ds = f' data-status="{k}"' if counted else ""
     return f'<span class="pill {cls}"{ds}>{label}</span>'
 
@@ -90,7 +81,7 @@ def ul(items, cls=""):
     return f"<ul{c}>" + "".join(f"<li>{md(i)}</li>" for i in items) + "</ul>"
 
 
-# ---------------------------------------------------------------- status items
+# ---------------------------------------------------------------- status
 
 def load_spec(path):
     path = pathlib.Path(path)
@@ -99,129 +90,56 @@ def load_spec(path):
     return spec
 
 
-def collect_sections(spec):
-    """Return [{'title', 'sub', 'items': [...]}], from inline sections and/or items_tsv."""
-    sections = [dict(s, items=list(s.get("items") or [])) for s in (spec.get("sections") or [])]
-    tsv = spec.get("items_tsv")
-    if tsv:
-        by_title = {s["title"]: s for s in sections}
-        with open(spec["_dir"] / tsv, newline="") as fh:
-            for row in csv.DictReader(fh, delimiter="\t"):
-                row = {k: v for k, v in row.items() if v not in (None, "")}
-                title = row.pop("section", "Items")
-                if title not in by_title:
-                    by_title[title] = {"title": title, "items": []}
-                    sections.append(by_title[title])
-                by_title[title]["items"].append(row)
-    for s in sections:
-        for it in s["items"]:
+def collect_sources(spec):
+    """[{'name', 'items': [...]}], one per document the reader sent; each item needs id + status."""
+    sources = [dict(src, items=list(src.get("items") or [])) for src in (spec.get("sources") or [])]
+    for src in sources:
+        for it in src["items"]:
             if "id" not in it or "status" not in it:
-                sys.exit(f"item in section {s.get('title')!r} needs at least id and status: {it}")
+                sys.exit(f"item under {src.get('name')!r} needs at least id and status: {it}")
             it["id"] = str(it["id"])
             it["_k"] = status_key(it["status"])
-    return sections
+    return sources
 
 
-def changed_ids(spec, sections):
+def changed_ids(spec, sources):
+    """IDs whose status or 'done' text differ from the previous round's spec (or are new)."""
     prev = spec.get("previous")
     if not prev:
         return set(), None
     p = load_spec(spec["_dir"] / prev)
-    old = {it["id"]: (it["_k"], str(it.get("done", "")).strip()) for s in collect_sections(p) for it in s["items"]}
-    now = {it["id"]: (it["_k"], str(it.get("done", "")).strip()) for s in sections for it in s["items"]}
+    old = {it["id"]: (it["_k"], str(it.get("done", "")).strip()) for src in collect_sources(p) for it in src["items"]}
+    now = {it["id"]: (it["_k"], str(it.get("done", "")).strip()) for src in sources for it in src["items"]}
     return {i for i, v in now.items() if old.get(i) != v}, str(p.get("date", prev))
 
 
-def ids_label(label, ids):
-    return f"{label}: {', '.join(ids)}" if len(ids) <= 6 else label
-
-
 def render_status(spec, out):
-    sections = collect_sections(spec)
-    changed, prev_date = changed_ids(spec, sections)
-    items = [it for s in sections for it in s["items"]]
-    ledger = spec.get("mode", "round") == "ledger"
+    sources = collect_sources(spec)
+    changed, prev_date = changed_ids(spec, sources)
+    items = [it for src in sources for it in src["items"]]
 
-    tiles = []
-    for k, (cls, _, label) in STATUS.items():
-        ids = [it["id"] for it in items if it["_k"] == k]
-        if ids:
-            tiles.append(tile(len(ids), ids_label(label, ids), cls, status=k))
-    if changed:
-        tiles.append(tile(len(changed), f"changed since {prev_date}", "chg"))
-    t = spec.get("tests")
-    if t:
-        lab = "tests" + (f", from {t['before']}" if "before" in t else "") + (f" on {t['since']}" if "since" in t else "")
-        tiles.append(tile(f"{t['now']:,}" if isinstance(t["now"], int) else t["now"], lab, "ok"))
-    tiles += [tile(x["n"], x["label"], x.get("kind", "")) for x in spec.get("tiles") or []]
+    tiles = [tile(sum(it["_k"] == k for it in items), label.lower(), cls, status=k)
+             for k, (cls, label) in STATUS.items() if any(it["_k"] == k for it in items)]
     out.append('<div class="tiles">' + "\n".join(tiles) + "</div>")
-    summary(spec, out)
+    if spec.get("bottom_line"):
+        out.append(f'<div class="note"><b>Bottom line.</b> {md(spec["bottom_line"])}</div>')
+    if changed:
+        out.append(f'<p class="muted"><span class="chg-mark">&#9679;</span> = changed since your {esc(prev_date)} report</p>')
 
-    if ledger:
-        att = [it for it in items if it["_k"] in ATTENTION]
-        disc = spec.get("discrepancies") or []
-        if att or disc:
-            out.append('<div class="attn">')
-            if att:
-                out.append(f"<h3>Needs attention ({len(att)})</h3><ul>" + "".join(
-                    f'<li><b>{esc(it["id"])}</b> {pill(it["status"], counted=False)} {md(it.get("asked", ""))}</li>'
-                    for it in att) + "</ul>")
-            if disc:
-                out.append("<h3>Where earlier reports and the code disagree</h3>" + ul(disc))
-            out.append("</div>")
-
-    cols = {"id": "ID", "asked": "What you asked", "done": "What was done, and how it was verified", "status": "Status"}
-    cols.update(spec.get("columns") or {})
-    has_prio = any(it.get("priority") for it in items)
-    if has_prio or changed:
-        key = []
-        if has_prio:
-            key += ['<span><i style="background:var(--bad)"></i>P0 / critical</span>',
-                    '<span><i style="background:var(--chg)"></i>P1 / high</span>']
-        if changed:
-            key.append(f'<span><span class="chg-mark">&#9679;</span> changed since {esc(prev_date)}</span>')
-        key_html = '<div class="key">' + "".join(key) + "</div>"
-    else:
-        key_html = ""
-
-    for i, s in enumerate(sections):
-        n = len(s["items"])
-        sub = s.get("sub") or f"{n} item{'s' if n != 1 else ''}"
-        out.append(f'<h2>{md(s["title"])} <span class="cnt">{md(sub)}</span></h2>')
-        if i == 0:
-            out.append(key_html)
-        if s.get("intro"):
-            out.append(f"<p>{md(s['intro'])}</p>")
-        out.append('<div class="tw"><table class="stack"><thead><tr>'
-                   f'<th>{esc(cols["id"])}</th><th>{esc(cols["asked"])}</th><th>{esc(cols["done"])}</th>'
-                   f'<th>{esc(cols["status"])}</th></tr></thead><tbody>')
-        for it in s["items"]:
+    for src in sources:
+        out.append(f'<h2>{md(src["name"])}</h2>')
+        out.append('<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th>'
+                   "<th>What I did</th><th>Status</th></tr></thead><tbody>")
+        for it in src["items"]:
             ch = it["id"] in changed
-            prio = str(it.get("priority", ""))
-            idcls = " ".join(filter(None, ["id", PRIORITY.get(prio.lower(), "")]))
             mark = ' <span class="chg-mark">&#9679;</span>' if ch else ""
-            sev = f'<span class="sev">{esc(prio)}</span>' if prio else ""
-            more = f' <span class="more">&rarr; {md(it["link"])}</span>' if it.get("link") else ""
-            commit = f'<br><code>{esc(it["commit"])}</code>' if it.get("commit") else ""
             trc = ' class="changed"' if ch else ""
-            out.append(f'<tr{trc}>'
-                       f'<td class="{idcls}" data-label="{esc(cols["id"])}">{esc(it["id"])}{mark}{sev}</td>'
+            commit = f'<br><code>{esc(it["commit"])}</code>' if it.get("commit") else ""
+            out.append(f'<tr{trc}><td class="id" data-label="ID">{esc(it["id"])}{mark}</td>'
                        f'<td data-label="Asked">{md(it.get("asked", ""))}</td>'
-                       f'<td data-label="Done">{md(it.get("done", ""))}{more}</td>'
+                       f'<td data-label="Did">{md(it.get("done", ""))}</td>'
                        f'<td class="st" data-label="Status">{pill(it["status"])}{commit}</td></tr>')
         out.append("</tbody></table></div>")
-
-    if spec.get("running"):
-        out.append("<h2>What is running now</h2>" + ul(spec["running"]))
-    if spec.get("outside"):
-        out.append('<h2>Outside your numbered list <span class="cnt">items not yet confirmed, and what else I found</span></h2>')
-        out.append('<div class="tw"><table class="stack"><thead><tr><th>What you flagged, or what I found</th>'
-                   "<th>Where it stands</th><th>Status</th></tr></thead><tbody>")
-        for o in spec["outside"]:
-            out.append(f'<tr><td data-label="Item">{md(o.get("item"))}</td><td data-label="Where">{md(o.get("where"))}</td>'
-                       f'<td class="st" data-label="Status">{pill(o["status"], counted=False)}</td></tr>')
-        out.append("</tbody></table></div>")
-    blocks(spec, out)
 
 
 # ---------------------------------------------------------------- generic blocks
@@ -380,10 +298,8 @@ def build(spec):
     privacy = spec.get("privacy", True)
 
     out = [f"<h1>{md(spec.get('heading') or spec['title'])}</h1>"]
-    meta = md(spec.get("meta", ""))
-    if typ == "status":
-        meta = (meta + " &middot; " if meta else "") + f"status as of {esc(date)}"
-    elif date not in meta:
+    meta = md(spec.get("context") or spec.get("meta", ""))
+    if date not in meta:
         meta = (meta + " &middot; " if meta else "") + esc(date)
     out.append(f'<p class="meta">{meta}</p>')
     if spec.get("demo"):

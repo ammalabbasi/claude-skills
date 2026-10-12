@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="generator" content="html-report">
 <meta name="html-report-type" content="status">
-<title>readsieve code review status</title>
+<title>Example review status</title>
 <style>
   /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
   :root { color-scheme: light;
@@ -160,26 +160,22 @@
 </head>
 <body><main>
 
-<h1>readsieve — code review status</h1>
-<p class="meta">Your 25 Aug review (R1–R6) · branch <code>fix/review-1</code> at <code>a1b2c3d</code>, pushed, not merged &middot; status as of 2026-09-01</p>
-<div class="demo">Example report. The project (readsieve), the reviewer and every number are invented.</div>
-<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">2</div><div class="l">fixed: R1, R2</div></div>
-<div class="tile ok" data-status="done"><div class="n">1</div><div class="l">done: R6</div></div>
-<div class="tile chg" data-status="progress"><div class="n">1</div><div class="l">in progress: R3</div></div>
-<div class="tile dec" data-status="decision"><div class="n">1</div><div class="l">need your decision: R5</div></div>
-<div class="tile bad" data-status="open"><div class="n">1</div><div class="l">open: R4</div></div>
-<div class="tile ok"><div class="n">212</div><div class="l">tests, from 180 on 25 Aug</div></div></div>
-<div class="note "><b>Both P0 findings are fixed; the read-pairing bug changes results and is being rerun.</b> R1 and R2 are fixed with regression tests. R3 is in progress. R5 needs your call on whether to keep the legacy output format.</div>
-<h2>Your 25 Aug review <span class="cnt">6 items</span></h2>
-<div class="key"><span><i style="background:var(--bad)"></i>P0 / critical</span><span><i style="background:var(--chg)"></i>P1 / high</span></div>
-<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What was done, and how it was verified</th><th>Status</th></tr></thead><tbody>
-<tr><td class="id bad" data-label="ID">R1<span class="sev">P0</span></td><td data-label="Asked">Unpaired reads are silently dropped at extraction.</td><td data-label="Done">Unpaired reads now kept and counted; regression test on a synthetic BAM with 10% orphans.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a1b2c3d</code></td></tr>
-<tr><td class="id bad" data-label="ID">R2<span class="sev">P0</span></td><td data-label="Asked">Host index version is not recorded.</td><td data-label="Done">Index checksum written to the run report; run stops on mismatch.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b2c3d4e</code></td></tr>
-<tr><td class="id chg" data-label="ID">R3<span class="sev">P1</span></td><td data-label="Asked">Paired reads split across chunks lose their mate.</td><td data-label="Done">Fix written; rerun of the 40-sample pilot under way.</td><td class="st" data-label="Status"><span class="pill chg" data-status="progress">In progress</span></td></tr>
-<tr><td class="id" data-label="ID">R4</td><td data-label="Asked">Thread count is hardcoded.</td><td data-label="Done">Not started.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
-<tr><td class="id" data-label="ID">R5</td><td data-label="Asked">Legacy TSV output duplicates the JSON.</td><td data-label="Done">Removing it breaks two downstream scripts. Keep or drop?</td><td class="st" data-label="Status"><span class="pill dec" data-status="decision">Needs decision</span></td></tr>
-<tr><td class="id" data-label="ID">R6</td><td data-label="Asked">README install steps are out of date.</td><td data-label="Done">Rewritten and tested in a clean container.</td><td class="st" data-label="Status"><span class="pill ok" data-status="done">Done</span><br><code>c3d4e5f</code></td></tr>
+<h1>Example project — status of your review</h1>
+<p class="meta">Your 25 Aug review (R1–R5) · commit <code>a1b2c3d</code> &middot; 2026-09-01</p>
+<div class="demo">Example. The project, the reviewer and every number are invented.</div>
+<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">2</div><div class="l">fixed</div></div>
+<div class="tile chg" data-status="progress"><div class="n">1</div><div class="l">in progress</div></div>
+<div class="tile bad" data-status="open"><div class="n">1</div><div class="l">open</div></div>
+<div class="tile park" data-status="wontdo"><div class="n">1</div><div class="l">won&#x27;t do</div></div></div>
+<div class="note"><b>Bottom line.</b> Both critical findings are fixed. The read-pairing fix is written and its rerun is under way.</div>
+<h2>Your 25 Aug review (R1–R5)</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr><td class="id" data-label="ID">R1</td><td data-label="Asked">Unpaired reads are silently dropped.</td><td data-label="Did">Now kept and counted; tested on a file with 10% unpaired reads.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a1b2c3d</code></td></tr>
+<tr><td class="id" data-label="ID">R2</td><td data-label="Asked">The reference version is not recorded.</td><td data-label="Did">Recorded in every run report; a mismatch stops the run.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b2c3d4e</code></td></tr>
+<tr><td class="id" data-label="ID">R3</td><td data-label="Asked">Paired reads split across chunks lose their mate.</td><td data-label="Did">Fix written; rerunning the 40-sample pilot.</td><td class="st" data-label="Status"><span class="pill chg" data-status="progress">In progress</span></td></tr>
+<tr><td class="id" data-label="ID">R4</td><td data-label="Asked">Thread count is hardcoded.</td><td data-label="Did">Not started.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+<tr><td class="id" data-label="ID">R5</td><td data-label="Asked">Drop the old TSV output.</td><td data-label="Did">Two downstream scripts still read it; keeping it.</td><td class="st" data-label="Status"><span class="pill park" data-status="wontdo">Won't do</span></td></tr>
 </tbody></table></div>
-<footer>Generated 2026-09-01 for readsieve.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<footer>Generated 2026-09-01 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>
