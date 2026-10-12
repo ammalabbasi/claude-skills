@@ -33,7 +33,7 @@ TOP_KEYS = {"type", "title", "heading", "project", "date", "meta", "audience", "
             # findings
             "question", "answer", "tested", "found", "limits", "reproduce",
             # update / brief
-            "open", "asks", "changed", "next"}
+            "areas", "asks", "changed", "next"}
 
 
 def esc(s):
@@ -226,7 +226,7 @@ def table(t):
 
 
 def blocks(spec, out):
-    lettered = spec.get("lettered", spec["type"] == "update")
+    lettered = spec.get("lettered", False)
     state = {"letter": 0, "fig": 0, "tabs": 0}
 
     def h2(text, sub=None):
@@ -308,8 +308,6 @@ def blocks(spec, out):
                 sys.exit(f"unknown block: {list(b)}; use h2, h3, p, note, list, tiles, table, bars, figure, details, tabs, html")
 
     render(spec.get("blocks") or [])
-    if spec["type"] in ("update",) and spec.get("open"):
-        out.append(h2("Still open or deferred") + ul(spec["open"]))
     if spec["type"] == "brief":
         if spec.get("changed"):
             out.append("<h2>What changed</h2>" + ul(spec["changed"]))
@@ -348,8 +346,19 @@ def build(spec):
     else:
         if spec.get("tiles"):
             out.append('<div class="tiles">' + "".join(tile(x["n"], x["label"], x.get("kind", "")) for x in spec["tiles"]) + "</div>")
-        if typ == "update" and isinstance(spec.get("summary"), str):
-            spec["summary"] = {"headline": "In one paragraph.", "body": spec["summary"], "kind": "ok"}
+        if typ == "update":
+            if isinstance(spec.get("summary"), str):
+                spec["summary"] = {"headline": "In one paragraph.", "body": spec["summary"], "kind": "ok"}
+            areas = spec.get("areas") or []
+            if len(areas) > 1:
+                spec["blocks"] = [{"tabs": areas}] + (spec.get("blocks") or [])
+            elif areas:
+                a = areas[0]
+                spec["blocks"] = ([{"h2": a["heading"]}] if a.get("heading") else []) + \
+                                 ([{"html": f'<p class="lede">{md(a["summary"])}</p>'}] if a.get("summary") else []) + \
+                                 (a.get("blocks") or []) + (spec.get("blocks") or [])
+                if a.get("asks"):
+                    spec["asks"] = a["asks"]
         summary(spec, out)
         blocks(spec, out)
 

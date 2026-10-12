@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="generator" content="html-report">
 <meta name="html-report-type" content="update">
-<title>Example project project update</title>
+<title>Project update</title>
 <style>
   /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
   :root { color-scheme: light;
@@ -156,23 +156,49 @@
     .tabbar { display:none; }
     .tabs > .panel { display:block !important; break-before:page; }
   }
+  #tb1-1:checked~.tabbar label[for="tb1-1"],#tb1-2:checked~.tabbar label[for="tb1-2"],#tb1-3:checked~.tabbar label[for="tb1-3"]{color:var(--ink);background:var(--surface);border-color:var(--rule);margin-bottom:-1px}
+  #tb1-1:checked~#tb1-p1,#tb1-2:checked~#tb1-p2,#tb1-3:checked~#tb1-p3{display:block}
 </style>
 </head>
 <body><main>
 
-<h1>Example project — what changed in v1.1.0, and what it does to the results</h1>
-<p class="meta">Update for the steering group &middot; 2026-09-16</p>
-<div class="demo">Example report. The project, the reviewer and every number are invented.</div>
-<div class="note ok"><b>In one paragraph.</b> All review findings are fixed and v1.1.0 is tagged. The one change that moves results is the read-pairing fix: on the 40-sample pilot it moves 3 samples up one tier and none down. Everything else is provenance and usability. Thread scaling beyond 16 cores is still being measured. <b>I need a decision on the default minimum read length.</b></div>
-<h2>A. Changes to the tool</h2>
-<ul><li><b>Pairing (R3):</b> mates split across processing chunks are rejoined; 4% more reads kept on average.</li><li><b>Provenance (R2):</b> the host index checksum is recorded and checked on every run.</li><li><b>Usability (R4, R6):</b> <code>--threads</code> flag; install steps tested in a clean container.</li></ul>
-<h2>B. Effect on results</h2>
-<div class="note "><b>Result:</b> 3 of 40 pilot samples move up one tier; none move down.</div>
-<div class="tw"><table><thead><tr><th>Change</th><th class="num">Samples affected</th><th>Direction</th></tr></thead><tbody><tr><td>Pairing fix</td><td class="num">3 / 40</td><td>up one tier</td></tr><tr><td>Index checksum</td><td class="num">0 / 40</td><td>none (provenance only)</td></tr></tbody></table></div>
-<h2>C. Cost and time</h2>
-<div class="tiles"><div class="tile info"><div class="n">$42</div><div class="l">pilot rerun, compute at list price</div></div><div class="tile info"><div class="n">5.5 h</div><div class="l">wall time, 40 samples</div></div></div>
-<h2>D. Still open or deferred</h2><ul><li>Thread scaling beyond 16 cores (S3), results by 17 Sep.</li><li>Docker image, after v1.2.</li></ul>
-<h2>What I need from you</h2><ol class="asks"><li><b>Choose the default minimum read length: 50 or 70 bp.</b> 50 keeps 6% more reads; 70 halves the false-positive rate on simulated data. I recommend 70.</li></ol>
-<footer>Generated 2026-09-16 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<h1>Update — 18 September 2026</h1>
+<p class="meta">One tab per area; decisions are at the foot of each. &middot; 2026-09-18</p>
+<div class="demo">Real report from 18 Sep 2026, cleaned for sharing: two personal and internal tabs removed; cohorts and people anonymised; every number replaced with a placeholder; per-sample rows, figures and cloud account details removed.</div>
+<div class="note ok"><b>In one paragraph.</b> Extracting only the reads we need inside the cloud region works, and the full Cohort H would cost about $640. The tagged release agrees with a collaborator&#x27;s earlier run and counts slightly higher where they differ, so those samples should be rerun. v0.0.2 is ready to tag. Two decisions are waiting: the cohort spend (tab 1) and who reruns (tab 2).</div>
+<div class="tabs" id="tb1">
+<input type="radio" name="tb1" id="tb1-1" checked>
+<input type="radio" name="tb1" id="tb1-2">
+<input type="radio" name="tb1" id="tb1-3">
+<div class="tabbar"><label for="tb1-1">1 &middot; Data costs</label><label for="tb1-2">2 &middot; Comparison</label><label for="tb1-3">3 &middot; New version</label></div>
+<div class="panel" id="tb1-p1">
+<h2>Cohort H: what it costs to get the reads we need</h2>
+<p class="lede">The pipeline needs only the unmapped reads, about 3% of each file. Where we extract them decides the bill, and the spread is more than tenfold. Measured on 80 samples, not estimated.</p>
+<div class="tiles"><div class="tile ok"><div class="n">80</div><div class="l">samples delivered</div></div><div class="tile ok"><div class="n">$55</div><div class="l">what it actually cost</div></div><div class="tile info"><div class="n">~$640</div><div class="l">to do the full cohort</div></div><div class="tile info"><div class="n">2 h</div><div class="l">transfer time</div></div></div>
+<h3>The three options</h3>
+<div class="tw"><table><thead><tr><th>Approach</th><th class="num">Pilot (80)</th><th class="num">Full cohort (~1</th><th>000)</th></tr></thead><tbody><tr><td><b>A</b> — move whole files, extract here</td><td class="num">$720</td><td class="num">$8,100</td></tr><tr><td><b>B</b> — extract in-region, ship only the reads we need</td><td class="num"><b>$55</b></td><td class="num"><b>$640</b></td></tr><tr><td><b>C</b> — run the whole pipeline in the cloud</td><td class="num">$190</td><td class="num">$2,200</td></tr></tbody></table></div>
+<div class="note "><b>Why B is cheap.</b> Reading inside the cloud region is free; the only charge that scales with volume is moving data out. So the whole game is shrinking what leaves the region. B is about 13× cheaper than A, and unlike C it leaves us a reusable read set. I went with B.</div>
+<p><i>Volumes and transfer times are measured; costs are at list price, not confirmed against billing.</i></p>
+<h3>What I need from you</h3><ol class="asks"><li><b>Approve extracting the full cohort.</b> About $640 and one afternoon of transfer.</li></ol>
+</div>
+<div class="panel" id="tb1-p2">
+<h2>A collaborator&#x27;s run against the tagged release</h2>
+<p class="lede">A collaborator ran an untagged version of the pipeline; I ran the tagged v0.0.1 release after two fixes from their own review. This compares the two on the positive samples of Cohort M.</p>
+<div class="tiles"><div class="tile info"><div class="n">240</div><div class="l">matched samples</div></div><div class="tile ok"><div class="n">0.998</div><div class="l">correlation of per-sample totals</div></div><div class="tile ok"><div class="n">110</div><div class="l">samples identical on every gene</div></div><div class="tile info"><div class="n">1.03×</div><div class="l">median ratio, tagged / untagged</div></div></div>
+<h3>The small difference is deliberate</h3>
+<ul><li>Where the two disagree, the tagged release counts <b>higher, never lower</b>: higher in 130 samples, equal in 110, lower in none.</li><li>The reason: a read overlapping two genes used to be discarded; the release assigns it to the gene it overlaps most.</li><li>So 25 samples now carry small counts where the earlier run had none, as expected for reads recovered at gene boundaries.</li></ul>
+<h3>What this means</h3>
+<p>The earlier results are superseded rather than wrong. Any figure for the manuscript should come from the tagged release, and a rerun is worth doing on v0.0.2, which reports far more per sample (tab 3).</p>
+<h3>What I need from you</h3><ol class="asks"><li><b>Who reruns these samples?</b> The collaborator, or me if we can get access to the data. Either works.</li></ol>
+</div>
+<div class="panel" id="tb1-p3">
+<h2>v0.0.2: what we learn about each sample</h2>
+<p class="lede">v0.0.1 counts reads per gene. v0.0.2 keeps that layer untouched and adds how strong the evidence is, whether the island reassembles, and which organism carries it.</p>
+<div class="tw"><table><thead><tr><th>Per sample</th><th>you get</th><th>v0.0.1</th><th>v0.0.2</th></tr></thead><tbody><tr><td>Reads per gene</td><td>yes</td><td>unchanged</td></tr><tr><td>The same by a second, independent method</td><td>yes</td><td>unchanged</td></tr><tr><td>QC: where the sample lost its reads</td><td>yes</td><td>plus a status column, so a failed sample is visible</td></tr><tr><td>Island coverage</td><td>binned</td><td>per base</td></tr><tr><td>An evidence tier</td><td>—</td><td>yes, from reads, genes and breadth together</td></tr><tr><td>Island reassembled from its own reads</td><td>—</td><td>two independent assemblers, and whether they agree</td></tr><tr><td>Which organism carries it</td><td>—</td><td>draft genomes, completeness, species (metagenomes)</td></tr><tr><td>What sits around the island</td><td>—</td><td>prophages, mobility markers, neighbouring organisms</td></tr><tr><td>Strain of the carrier</td><td>—</td><td>sequence type and phylogroup</td></tr></tbody></table></div>
+<h3>Status and plan</h3>
+<ul><li>On a feature branch, CI green, not yet released.</li><li>Finish the README, then tag v0.0.2; it is tested on both tumour and metagenome data.</li><li>Run it on the metagenomes, then rerun the tumour data on the tagged release.</li></ul>
+</div>
+</div>
+<footer>Generated 2026-09-18 for pksProfiler.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>

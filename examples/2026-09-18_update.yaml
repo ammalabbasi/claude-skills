@@ -1,0 +1,89 @@
+# Real report (18 Sep 2026), cleaned for sharing. See the banner text below for what was changed.
+type: update
+title: Project update
+heading: Update — 18 September 2026
+project: pksProfiler
+date: 2026-09-18
+context: One tab per area; decisions are at the foot of each.
+demo: >-
+  Real report from 18 Sep 2026, cleaned for sharing: two personal and internal tabs removed; cohorts and people
+  anonymised; every number replaced with a placeholder; per-sample rows, figures and cloud account details removed.
+summary: >-
+  Extracting only the reads we need inside the cloud region works, and the full Cohort H would cost about $640.
+  The tagged release agrees with a collaborator's earlier run and counts slightly higher where they differ, so those
+  samples should be rerun. v0.0.2 is ready to tag. Two decisions are waiting: the cohort spend (tab 1) and who
+  reruns (tab 2).
+
+areas:
+  - label: Data costs
+    heading: "Cohort H: what it costs to get the reads we need"
+    summary: >-
+      The pipeline needs only the unmapped reads, about 3% of each file. Where we extract them decides the bill,
+      and the spread is more than tenfold. Measured on 80 samples, not estimated.
+    blocks:
+      - tiles:
+          - {n: "80", label: samples delivered, kind: ok}
+          - {n: "$55", label: what it actually cost, kind: ok}
+          - {n: "~$640", label: to do the full cohort, kind: info}
+          - {n: "2 h", label: transfer time, full cohort, kind: info}
+      - h3: The three options
+      - table:
+          columns: [Approach, Pilot (80), Full cohort (~1,000)]
+          num: [1, 2]
+          rows:
+            - ["**A** — move whole files, extract here", "$720", "$8,100"]
+            - ["**B** — extract in-region, ship only the reads we need", "**$55**", "**$640**"]
+            - ["**C** — run the whole pipeline in the cloud", "$190", "$2,200"]
+      - note: >-
+          Reading inside the cloud region is free; the only charge that scales with volume is moving data out.
+          So the whole game is shrinking what leaves the region. B is about 13× cheaper than A, and unlike C it
+          leaves us a reusable read set. I went with B.
+        headline: Why B is cheap.
+      - p: "*Volumes and transfer times are measured; costs are at list price, not confirmed against billing.*"
+    asks:
+      - {ask: "Approve extracting the full cohort.", detail: "About $640 and one afternoon of transfer."}
+
+  - label: Comparison
+    heading: A collaborator's run against the tagged release
+    summary: >-
+      A collaborator ran an untagged version of the pipeline; I ran the tagged v0.0.1 release after two fixes
+      from their own review. This compares the two on the positive samples of Cohort M.
+    blocks:
+      - tiles:
+          - {n: "240", label: matched samples, kind: info}
+          - {n: "0.998", label: correlation of per-sample totals, kind: ok}
+          - {n: "110", label: samples identical on every gene, kind: ok}
+          - {n: "1.03×", label: "median ratio, tagged / untagged", kind: info}
+      - h3: The small difference is deliberate
+      - list:
+          - "Where the two disagree, the tagged release counts **higher, never lower**: higher in 130 samples, equal in 110, lower in none."
+          - "The reason: a read overlapping two genes used to be discarded; the release assigns it to the gene it overlaps most."
+          - "So 25 samples now carry small counts where the earlier run had none, as expected for reads recovered at gene boundaries."
+      - h3: What this means
+      - p: >-
+          The earlier results are superseded rather than wrong. Any figure for the manuscript should come from the
+          tagged release, and a rerun is worth doing on v0.0.2, which reports far more per sample (tab 3).
+    asks:
+      - {ask: "Who reruns these samples?", detail: "The collaborator, or me if we can get access to the data. Either works."}
+
+  - label: New version
+    heading: "v0.0.2: what we learn about each sample"
+    summary: v0.0.1 counts reads per gene. v0.0.2 keeps that layer untouched and adds how strong the evidence is, whether the island reassembles, and which organism carries it.
+    blocks:
+      - table:
+          columns: [Per sample, you get, v0.0.1, v0.0.2]
+          rows:
+            - ["Reads per gene", "yes", "unchanged"]
+            - ["The same by a second, independent method", "yes", "unchanged"]
+            - ["QC: where the sample lost its reads", "yes", "plus a status column, so a failed sample is visible"]
+            - ["Island coverage", "binned", "per base"]
+            - ["An evidence tier", "—", "yes, from reads, genes and breadth together"]
+            - ["Island reassembled from its own reads", "—", "two independent assemblers, and whether they agree"]
+            - ["Which organism carries it", "—", "draft genomes, completeness, species (metagenomes)"]
+            - ["What sits around the island", "—", "prophages, mobility markers, neighbouring organisms"]
+            - ["Strain of the carrier", "—", "sequence type and phylogroup"]
+      - h3: Status and plan
+      - list:
+          - "On a feature branch, CI green, not yet released."
+          - "Finish the README, then tag v0.0.2; it is tested on both tumour and metagenome data."
+          - "Run it on the metagenomes, then rerun the tumour data on the tagged release."

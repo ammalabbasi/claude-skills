@@ -1,26 +1,19 @@
-# UPDATE — narrative across several topics, for someone who has not read the status tables.
-# h2 blocks are lettered A., B., C. automatically (set lettered: false to turn off).
+# UPDATE — answers: "What's going on across my projects, and what do you need from me?"
+# The periodic email. One tab per area; with a single area there are no tabs.
 type: update
-title: REPLACE project update             # 2-6 words
-heading: REPLACE — what changed, and what it does to the results
+title: REPLACE update                    # browser tab, 2-6 words
+heading: Update — REPLACE (date in words)
 project: REPLACE
-date: REPLACE
-meta: Update for REPLACE · detail by item in the REPLACE status report
+date: REPLACE                            # YYYY-MM-DD
+context: One tab per area; decisions are at the foot of each.
 summary: >-
-  REPLACE — five sentences: what is done, the one change that moves results and by how much,
-  what does not change, what is still being tested, and what you need from them.
-blocks:
-  - h2: REPLACE topic
-  - list:
-      - "**REPLACE:** REPLACE, in plain terms."
-  - h2: REPLACE topic
-  - note: REPLACE — the one-line result of this section.
-    headline: "Result:"
-  - table:
-      columns: [REPLACE, REPLACE, REPLACE]
-      num: [2]
-      rows: [[REPLACE, REPLACE, REPLACE]]
-open:
-  - REPLACE
-asks:
-  - {ask: REPLACE — the decision., detail: REPLACE — cost, time, or what happens if not.}
+  REPLACE — "In one paragraph": what's done, what moved the results, and what you need from them.
+
+areas:
+  - label: REPLACE                       # short tab label
+    heading: REPLACE — the area's headline
+    summary: REPLACE — one line on what this tab is about.
+    blocks:                              # a few bullets, or one table; tiles/bars/figure if they help
+      - list: [REPLACE]
+    asks:                                # optional; shown at the foot of this tab
+      - {ask: REPLACE — the decision., detail: REPLACE — cost, time, or what happens if not.}

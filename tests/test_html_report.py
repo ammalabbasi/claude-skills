@@ -114,13 +114,22 @@ def test_cli_init_build(tmp_path):
     assert r.returncode == 1  # REPLACE placeholders still there
 
 
-def test_tabs_render_panels_asks_and_scoped_css(examples):
-    s = (examples / "2026-09-19_lab_update.html").read_text()
-    assert s.count('class="panel"') == 4
-    assert '<label for="tb1-2">2 &middot; Cloud costs</label>' in s
+def test_update_one_tab_per_area_with_asks(examples):
+    s = (examples / "2026-09-18_update.html").read_text()
+    assert s.count('class="panel"') == 3
+    assert '<label for="tb1-2">2 &middot; Comparison</label>' in s
     assert s.count("<h3>What I need from you</h3>") == 2
-    assert "#tb1-4:checked~#tb1-p4" in s
+    assert "#tb1-3:checked~#tb1-p3" in s
     assert "display:block !important" in s  # print shows every panel
+
+
+def test_update_with_one_area_has_no_tabs(tmp_path):
+    out = build(tmp_path, {"type": "update", "title": "one area update", "summary": "s",
+                           "areas": [{"label": "A", "heading": "Only area", "blocks": [{"p": "x"}],
+                                      "asks": [{"ask": "Decide."}]}]})
+    s = out.read_text()
+    assert 'class="tabs"' not in s and "<h2>Only area</h2>" in s and "What I need from you" in s
+    assert not fails(out)
 
 
 def test_nested_tabs(tmp_path):

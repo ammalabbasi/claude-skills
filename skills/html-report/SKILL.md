@@ -1,6 +1,6 @@
 ---
 name: html-report
-description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status ("did you do what I asked?" — one table per document the reviewer sent, in their numbering), findings (one experiment or validation written up end to end), update (narrative across topics, ending in asks), brief (one screen for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
+description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status ("did you do what I asked?" — one table per document the reviewer sent, in their numbering), findings ("what did this one experiment show?" — question, answer, tested, found, limits), update ("what is going on and what do you need from me?" — the periodic email, one tab per area with asks at the foot), brief (one screen for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
 ---
 
 # html-report
@@ -19,7 +19,7 @@ identifier patterns (`$HTML_REPORT_PATTERNS`). Local rules override this file wh
 |---|---|---|
 | `status` | "Did you do what I asked?" | After a round of fixes, back to the person who gave you the list. One table per document they sent, in their numbering. |
 | `findings` | "What did this one experiment show?" | When a single result needs more than a line in a status table; link it from that row. |
-| `update` | "What changed, and what do you need from me?" | Several topics, a reader who has not read the tables, or a decision needed. |
+| `update` | "What's going on across my projects, and what do you need from me?" | The periodic email. One tab per area, each with its asks at the foot; one area means no tabs. |
 | `brief` | "Where are we, in one screen?" | Readers outside the project: a committee, a funder, a PI's collaborator. ≤4 tiles, ~450 words. |
 
 Do not mix them: an analysis bolted onto a status report is a `findings` report waiting to be split out.
@@ -73,15 +73,11 @@ sentences with direction and size), `tested` (`[{test, data, n}]`; say which dat
 real-pooled), `found` (`[{heading, text, table | bars | figure}]`, one per test), `limits` and `next`.
 Optional `reproduce` (commands, folded at the bottom; strip it before sharing outside the lab).
 
-**update:** `summary` as a plain string becomes the "In one paragraph" box; `h2` blocks are lettered
-A., B., …; `open`, `asks` (`{ask, detail}`). **brief:** `changed`, `next`, `asks`.
+**update** — `summary` (a plain string, shown as "In one paragraph"), then `areas`, one per area:
+`{label, heading, summary, blocks, asks}`. More than one area renders as CSS-only tabs (print shows every
+panel); a single area renders without tabs. Keep each area to a few bullets or one table.
 
-**Tabs — the multi-area email update.** When one update covers unrelated areas (a project, costs,
-infrastructure, hiring), make the body a single `tabs` block: one tab per area, each self-contained,
-with its own `heading`, one-line `summary`, `blocks` and `asks` at its foot. Labels are numbered
-("1 · Cloud costs"); put "each tab is self-contained; decisions are at the foot of each" in `meta`.
-Tabs also nest, e.g. `Approach / Results / Conclusion` per experiment inside a findings report
-(`numbered: false`). Not for briefs. Example: `examples/2026-09-19_lab_update.yaml`.
+**brief:** `changed`, `next`, `asks`.
 
 **Blocks:** `h2` (+`sub`), `h3`, `p`, `note` (+`headline`, `kind`), `list` (+`ordered`), `tiles`,
 `table` (`{columns, rows, num, caption}`), `tabs` (list of `{label, heading, summary, blocks, asks}`,
