@@ -1,0 +1,66 @@
+# Real report (30 Sep 2026), cleaned for sharing. See the banner text below for what was changed.
+type: findings
+title: Upstream aligner findings
+question: Does the upstream aligner's setting hide pks reads from extraction?
+project: pksProfiler
+date: 2026-09-30
+context: Answers E1, V3, V6 · simulation on synthetic reads and public references, plus a pooled real-data pilot · commit `b8d3f60`
+demo: >-
+  Real report from 30 Sep 2026, cleaned for sharing: cohorts, aligner settings and genes anonymised; every number
+  replaced with a placeholder; internal pipelines and documentation sources removed.
+answer: >-
+  Yes. One alignment setting used upstream by Cohort A hides about half of genuine pks reads, because the aligner
+  counts weak chance matches to the human genome as "mapped". Cohort B, aligned with the default, loses almost none.
+  Also extracting the reads the default setting would have left unmapped recovers nearly all of them, with no human
+  reads getting through.
+
+tested:
+  - {test: "Simulation: synthetic pks reads mixed with human background, aligned as each cohort was", data: "Synthetic reads, public references", n: "~15,000 reads per condition"}
+  - {test: "Cause: the same reads re-aligned, changing only the score setting", data: "Synthetic reads, two public references", n: "8 conditions"}
+  - {test: "Real-data pilot: current vs proposed extraction", data: "Cohort A tumours and matched normals, pooled", n: "12 + 12"}
+
+found:
+  - heading: The strict setting alone explains the loss
+    text: >-
+      Changing only the score setting on the same reads reproduces the whole difference, on both references.
+      Longer reads lose more, because a chance match is easier to find in a longer read.
+    table:
+      columns: [Read length, Setting, Injected pks reads left unmapped]
+      num: [2]
+      rows:
+        - ["100 bp", "strict (Cohort A)", "61%"]
+        - ["100 bp", "default (Cohort B)", "96%"]
+        - ["150 bp", "strict (Cohort A)", "47%"]
+        - ["150 bp", "default (Cohort B)", "99%"]
+  - heading: The proposed extraction rule recovers almost everything
+    text: >-
+      Keeping unmapped reads plus primary mapped reads scoring below the default threshold brings every setup to about the
+      same level. No simulated human read passes host removal under the new rule.
+    bars:
+      caption: "pks reads reaching the gene counts, current → proposed rule (simulation). Placeholder values."
+      unit: "%"
+      data:
+        - {label: "Cohort A, 150 bp — current", value: 41, kind: bad}
+        - {label: "Cohort A, 150 bp — proposed", value: 94, kind: ok}
+        - {label: "Cohort A, 100 bp — current", value: 56, kind: bad}
+        - {label: "Cohort A, 100 bp — proposed", value: 94, kind: ok}
+        - {label: "Cohort B, 150 bp — current", value: 92, kind: info}
+        - {label: "Cohort B, 150 bp — proposed", value: 94, kind: ok}
+  - heading: On real samples, tumours gain evidence and normals gain none
+    text: "Pooled over the pilot: tumours move up, never down; matched normals do not change."
+    table:
+      columns: ["", Tumours, Normals]
+      num: [1, 2]
+      rows:
+        - ["Moved up exactly one tier", "6 of 12", "0 of 12"]
+        - ["Moved down", "0", "0"]
+        - ["Gained any pks-gene read", "7 of 12", "0 of 12"]
+        - ["Old tiers recomputed identically", "12 of 12", "12 of 12"]
+
+limits:
+  - "The pilot was chosen near tier thresholds, so its rate of new positives is not the cohort rate."
+  - "Simulated human reads are cleaner than real ones; the matched normals are the real specificity test."
+  - "The loss is uneven across genes, so gene-level patterns in earlier results are skewed, not just totals."
+next:
+  - "Run the full cohort, tumours and matched normals, and report tier changes cohort-wide; then WES."
+  - "Build the rule into extraction, applied only when the input header shows the affected aligner."

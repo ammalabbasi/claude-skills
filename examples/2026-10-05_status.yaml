@@ -46,7 +46,7 @@ sources:
   - name: Your 25 Sep report — §2–4 extraction, alignment, validation
     items:
       - {id: E0, asked: "Quantify fragment mode in host depletion before changing it.", done: "Synthetic and real tests: route-dependent reads drop to 0; no tier or read count changed. Now the default.", status: fixed, commit: 0c6d4e9}
-      - {id: E1, asked: "Extraction sensitivity per cohort setup.", done: "Confirmed and fixed: an upstream aligner setting left some target reads mapped. Validated in L1, L2, L7.", status: fixed, commit: 7b2e0d4}
+      - {id: E1, asked: "Extraction sensitivity per cohort setup.", done: "Confirmed and fixed: an upstream aligner setting left some target reads mapped ([write-up](2026-09-30_aligner_findings.html)). Validated in L1, L2, L7.", status: fixed, commit: 7b2e0d4}
       - {id: E2, asked: "Keep alignment-category counts.", done: "Categories kept; they must add up to the unchanged total.", status: fixed, commit: a07c4e3}
       - {id: E3, asked: "Reference digest and program chain for every input.", done: "Recorded for every input and in the run report; WES and RNA reruns captured.", status: fixed, commit: 5d81c3a}
       - {id: E4/V5, asked: "Read-length and depth dependence of tiers.", done: "Answered: positive rate rises with depth, so prevalence comparisons need depth strata.", status: fixed}

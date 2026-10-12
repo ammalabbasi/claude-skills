@@ -30,6 +30,8 @@ TOP_KEYS = {"type", "title", "heading", "project", "date", "meta", "audience", "
             "footer", "privacy", "methods", "demo", "lettered",
             # status
             "context", "bottom_line", "previous", "sources",
+            # findings
+            "question", "answer", "tested", "found", "limits", "reproduce",
             # update / brief
             "open", "asks", "changed", "next"}
 
@@ -140,6 +142,40 @@ def render_status(spec, out):
                        f'<td data-label="Did">{md(it.get("done", ""))}</td>'
                        f'<td class="st" data-label="Status">{pill(it["status"])}{commit}</td></tr>')
         out.append("</tbody></table></div>")
+
+
+# ---------------------------------------------------------------- findings
+
+def render_findings(spec, out):
+    if spec.get("answer"):
+        out.append(f'<div class="note ok"><b>Answer.</b> {md(spec["answer"])}</div>')
+    if spec.get("tested"):
+        out.append("<h2>What I tested</h2>")
+        out.append(table({"columns": ["Test", "Data", "n"], "num": [2],
+                          "rows": [[t.get("test", ""), t.get("data", ""), t.get("n", "")] for t in spec["tested"]]}))
+    if spec.get("found"):
+        out.append("<h2>What I found</h2>")
+        fig = 0
+        for i, f in enumerate(spec["found"], 1):
+            out.append(f"<h3>{i}. {md(f['heading'])}</h3>")
+            if f.get("text"):
+                out.append(f"<p>{md(f['text'])}</p>")
+            if f.get("table"):
+                out.append(table(f["table"]))
+            if f.get("bars"):
+                fig += 1
+                out.append(figure(bars_svg(f["bars"]), f["bars"].get("caption"), fig))
+            if f.get("figure"):
+                fig += 1
+                g = f["figure"]
+                data = base64.b64encode((spec["_dir"] / g["png"]).read_bytes()).decode()
+                out.append(figure(f'<img src="data:image/png;base64,{data}" alt="{esc(g.get("alt", ""))}">', g.get("caption"), fig))
+    if spec.get("limits") or spec.get("next"):
+        out.append("<h2>What this doesn't show, and what's next</h2><ul>"
+                   + "".join(f"<li><b>Limit:</b> {md(x)}</li>" for x in spec.get("limits") or [])
+                   + "".join(f"<li><b>Next:</b> {md(x)}</li>" for x in spec.get("next") or []) + "</ul>")
+    if spec.get("reproduce"):
+        out.append(f"<details><summary>How to reproduce</summary><pre><code>{esc(spec['reproduce'])}</code></pre></details>")
 
 
 # ---------------------------------------------------------------- generic blocks
@@ -297,7 +333,7 @@ def build(spec):
     spec["date"] = date
     privacy = spec.get("privacy", True)
 
-    out = [f"<h1>{md(spec.get('heading') or spec['title'])}</h1>"]
+    out = [f"<h1>{md(spec.get('question') or spec.get('heading') or spec['title'])}</h1>"]
     meta = md(spec.get("context") or spec.get("meta", ""))
     if date not in meta:
         meta = (meta + " &middot; " if meta else "") + esc(date)
@@ -307,6 +343,8 @@ def build(spec):
 
     if typ == "status":
         render_status(spec, out)
+    elif typ == "findings":
+        render_findings(spec, out)
     else:
         if spec.get("tiles"):
             out.append('<div class="tiles">' + "".join(tile(x["n"], x["label"], x.get("kind", "")) for x in spec["tiles"]) + "</div>")

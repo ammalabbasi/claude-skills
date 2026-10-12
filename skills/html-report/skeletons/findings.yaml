@@ -1,33 +1,25 @@
-# FINDINGS — one question, one experiment or validation, written up end to end.
+# FINDINGS — answers one question: "What did this one experiment show?"
+# Send it when a single result needs more than a line in a status table; link it from that row.
 type: findings
-title: REPLACE findings                  # 2-6 words
-heading: REPLACE — the question, stated as what was tested
+title: REPLACE findings                  # browser tab, 2-6 words
+question: REPLACE — the question, as you'd ask it (this is the page heading)
 project: REPLACE
-date: REPLACE
-meta: answers REPLACE (their item IDs) · code at `REPLACE`
-tiles:
-  - {n: REPLACE, label: REPLACE the headline number, kind: ok}
-  - {n: REPLACE, label: REPLACE n analysed (pooled), kind: info}
-  - {n: REPLACE, label: REPLACE the adverse number — 0 is a result, kind: bad}
-summary:
-  headline: REPLACE — the answer in one sentence, with direction and size.
-  body: REPLACE — what it means for the work, and the main caveat.
-blocks:
-  - h2: What was tested
-  - table:
-      columns: [Test, Data, Scope, Question it answers]
-      rows:
-        - ["**1. REPLACE**", REPLACE synthetic / public / real pooled, REPLACE, REPLACE]
-  - h2: Results
-  - h3: 1. REPLACE
-  - p: REPLACE — what the numbers show.
-  - bars:                      # inline SVG; or  - figure: {png: fig.png, alt: ..., caption: ...}
-      caption: REPLACE — what is plotted, n, the one thing to notice.
-      unit: "%"
-      data:
-        - {label: REPLACE, value: 0, kind: ok}
-  - h2: Sanity checks
-  - list: [REPLACE — the checks that would have caught a wrong answer.]
-  - h2: Caveats and what follows
-  - list: ["**Caveat:** REPLACE", "**Next:** REPLACE"]
-methods: {summary: Methods, commands and paths, code: "REPLACE"}
+date: REPLACE                            # YYYY-MM-DD
+context: Answers REPLACE (their IDs) · commit `REPLACE`
+answer: REPLACE — one or two sentences, with direction and size.
+
+tested:                                  # one row per test
+  - {test: REPLACE, data: "REPLACE — simulated / public reference / real, pooled", n: REPLACE}
+
+found:                                   # one entry per result, in the order of `tested`
+  - heading: REPLACE — the result as a statement
+    text: REPLACE — one sentence on what the numbers show.
+    table:                               # optional; or bars: / figure: {png, alt, caption}
+      columns: [REPLACE, REPLACE]
+      num: [1]
+      rows: [[REPLACE, REPLACE]]
+
+limits: [REPLACE — what this does not show]
+next: [REPLACE — the decision or follow-up it enables]
+# reproduce: |                           # optional; folded at the bottom. Strip before sharing outside.
+#   REPLACE commands

@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="generator" content="html-report">
 <meta name="html-report-type" content="findings">
-<title>Pairing fix findings</title>
+<title>Upstream aligner findings</title>
 <style>
   /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
   :root { color-scheme: light;
@@ -160,25 +160,23 @@
 </head>
 <body><main>
 
-<h1>Does the read-pairing fix change results on the pilot?</h1>
-<p class="meta">answers S1 and R3 · code at <code>e5f6a7b</code> &middot; 2026-09-14</p>
-<div class="demo">Example report. The project, the reviewer and every number are invented.</div>
-<div class="tiles"><div class="tile ok"><div class="n">3 / 40</div><div class="l">samples up one tier</div></div><div class="tile bad"><div class="n">0</div><div class="l">samples down a tier</div></div><div class="tile info"><div class="n">+4.1%</div><div class="l">median reads kept per sample</div></div></div>
-<div class="note "><b>The fix recovers mates in every sample and moves 3 of 40 up one tier, none down.</b> The gain is largest for short-insert libraries, as the mechanism predicts. The thresholds hold; no rerun of later steps is needed beyond the 3 samples that changed tier.</div>
-<h2>What was tested</h2>
-<div class="tw"><table><thead><tr><th>Test</th><th>Data</th><th class="num">Scope</th><th>Question it answers</th></tr></thead><tbody><tr><td><b>1. Synthetic</b></td><td>simulated pairs with chunk boundaries every 1</td><td class="num">000 reads</td><td>10,000 pairs</td><td>Are split mates rejoined?</td></tr><tr><td><b>2. Pilot rerun</b></td><td>the 40-sample pilot</td><td class="num">pooled</td><td>40</td><td>Does the fix change tiers?</td></tr></tbody></table></div>
-<h2>Results</h2>
-<h3>1. Synthetic pairs</h3>
-<p>All 10,000 pairs rejoined (before the fix: 9,012). No pair joined to the wrong mate.</p>
-<h3>2. Reads kept, by library insert size</h3>
-<figure><svg class="bars" viewBox="0 0 680 86" width="100%" role="img" aria-label="Median increase in reads kept per sample after the fix, by insert-size bin (n = 40). Short inserts gain most."><line x1="230" y1="0" x2="230" y2="86"/><text x="222" y="20" text-anchor="end">&lt; 200 bp (n = 9)</text><rect x="230" y="8" width="380.0" height="16" rx="2" style="fill:var(--ok)"/><text class="v" x="616.0" y="20">9.8%</text><text x="222" y="46" text-anchor="end">200–350 bp (n = 22)</text><rect x="230" y="34" width="139.6" height="16" rx="2" style="fill:var(--ok)"/><text class="v" x="375.6" y="46">3.6%</text><text x="222" y="72" text-anchor="end">&gt; 350 bp (n = 9)</text><rect x="230" y="60" width="27.1" height="16" rx="2" style="fill:var(--info)"/><text class="v" x="263.1" y="72">0.7%</text></svg><figcaption><b>Figure 1.</b> Median increase in reads kept per sample after the fix, by insert-size bin (n = 40). Short inserts gain most.</figcaption></figure>
-<div class="tw"><table><thead><tr><th>Tier before</th><th>Tier after</th><th class="num">Samples</th></tr></thead><tbody><tr><td>low</td><td>low</td><td class="num">21</td></tr><tr><td>low</td><td>medium</td><td class="num">2</td></tr><tr><td>medium</td><td>medium</td><td class="num">11</td></tr><tr><td>medium</td><td>high</td><td class="num">1</td></tr><tr><td>high</td><td>high</td><td class="num">5</td></tr></tbody></table></div><p class="muted">Tier transitions, 40 samples. No sample moved down.</p>
-<h2>Sanity checks</h2>
-<ul><li>Old tiers recompute identically from the stored counts: 40 / 40.</li><li>Read totals before extraction are unchanged: 40 / 40.</li></ul>
-<h2>Caveats and what follows</h2>
-<ul><li><b>Caveat:</b> the pilot has few long-insert libraries (9); the effect there is small but less certain.</li><li><b>Next:</b> freeze the fix (done in v1.1.0) and rerun the 3 changed samples downstream.</li></ul>
-<details><summary>Methods, commands and paths</summary><pre><code>Example project run --input pilot40.tsv --out runs/pairing_fix/
-python compare_tiers.py runs/v1.0.0 runs/pairing_fix &gt; tiers.tsv</code></pre></details>
-<footer>Generated 2026-09-14 for Example project.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+<h1>Does the upstream aligner&#x27;s setting hide pks reads from extraction?</h1>
+<p class="meta">Answers E1, V3, V6 · simulation on synthetic reads and public references, plus a pooled real-data pilot · commit <code>b8d3f60</code> &middot; 2026-09-30</p>
+<div class="demo">Real report from 30 Sep 2026, cleaned for sharing: cohorts, aligner settings and genes anonymised; every number replaced with a placeholder; internal pipelines and documentation sources removed.</div>
+<div class="note ok"><b>Answer.</b> Yes. One alignment setting used upstream by Cohort A hides about half of genuine pks reads, because the aligner counts weak chance matches to the human genome as &quot;mapped&quot;. Cohort B, aligned with the default, loses almost none. Also extracting the reads the default setting would have left unmapped recovers nearly all of them, with no human reads getting through.</div>
+<h2>What I tested</h2>
+<div class="tw"><table><thead><tr><th>Test</th><th>Data</th><th class="num">n</th></tr></thead><tbody><tr><td>Simulation: synthetic pks reads mixed with human background, aligned as each cohort was</td><td>Synthetic reads, public references</td><td class="num">~15,000 reads per condition</td></tr><tr><td>Cause: the same reads re-aligned, changing only the score setting</td><td>Synthetic reads, two public references</td><td class="num">8 conditions</td></tr><tr><td>Real-data pilot: current vs proposed extraction</td><td>Cohort A tumours and matched normals, pooled</td><td class="num">12 + 12</td></tr></tbody></table></div>
+<h2>What I found</h2>
+<h3>1. The strict setting alone explains the loss</h3>
+<p>Changing only the score setting on the same reads reproduces the whole difference, on both references. Longer reads lose more, because a chance match is easier to find in a longer read.</p>
+<div class="tw"><table><thead><tr><th>Read length</th><th>Setting</th><th class="num">Injected pks reads left unmapped</th></tr></thead><tbody><tr><td>100 bp</td><td>strict (Cohort A)</td><td class="num">61%</td></tr><tr><td>100 bp</td><td>default (Cohort B)</td><td class="num">96%</td></tr><tr><td>150 bp</td><td>strict (Cohort A)</td><td class="num">47%</td></tr><tr><td>150 bp</td><td>default (Cohort B)</td><td class="num">99%</td></tr></tbody></table></div>
+<h3>2. The proposed extraction rule recovers almost everything</h3>
+<p>Keeping unmapped reads plus primary mapped reads scoring below the default threshold brings every setup to about the same level. No simulated human read passes host removal under the new rule.</p>
+<figure><svg class="bars" viewBox="0 0 680 164" width="100%" role="img" aria-label="pks reads reaching the gene counts, current → proposed rule (simulation). Placeholder values."><line x1="230" y1="0" x2="230" y2="164"/><text x="222" y="20" text-anchor="end">Cohort A, 150 bp — current</text><rect x="230" y="8" width="165.7" height="16" rx="2" style="fill:var(--bad)"/><text class="v" x="401.7" y="20">41%</text><text x="222" y="46" text-anchor="end">Cohort A, 150 bp — proposed</text><rect x="230" y="34" width="380.0" height="16" rx="2" style="fill:var(--ok)"/><text class="v" x="616.0" y="46">94%</text><text x="222" y="72" text-anchor="end">Cohort A, 100 bp — current</text><rect x="230" y="60" width="226.4" height="16" rx="2" style="fill:var(--bad)"/><text class="v" x="462.4" y="72">56%</text><text x="222" y="98" text-anchor="end">Cohort A, 100 bp — proposed</text><rect x="230" y="86" width="380.0" height="16" rx="2" style="fill:var(--ok)"/><text class="v" x="616.0" y="98">94%</text><text x="222" y="124" text-anchor="end">Cohort B, 150 bp — current</text><rect x="230" y="112" width="371.9" height="16" rx="2" style="fill:var(--info)"/><text class="v" x="607.9" y="124">92%</text><text x="222" y="150" text-anchor="end">Cohort B, 150 bp — proposed</text><rect x="230" y="138" width="380.0" height="16" rx="2" style="fill:var(--ok)"/><text class="v" x="616.0" y="150">94%</text></svg><figcaption><b>Figure 1.</b> pks reads reaching the gene counts, current → proposed rule (simulation). Placeholder values.</figcaption></figure>
+<h3>3. On real samples, tumours gain evidence and normals gain none</h3>
+<p>Pooled over the pilot: tumours move up, never down; matched normals do not change.</p>
+<div class="tw"><table><thead><tr><th></th><th class="num">Tumours</th><th class="num">Normals</th></tr></thead><tbody><tr><td>Moved up exactly one tier</td><td class="num">6 of 12</td><td class="num">0 of 12</td></tr><tr><td>Moved down</td><td class="num">0</td><td class="num">0</td></tr><tr><td>Gained any pks-gene read</td><td class="num">7 of 12</td><td class="num">0 of 12</td></tr><tr><td>Old tiers recomputed identically</td><td class="num">12 of 12</td><td class="num">12 of 12</td></tr></tbody></table></div>
+<h2>What this doesn't show, and what's next</h2><ul><li><b>Limit:</b> The pilot was chosen near tier thresholds, so its rate of new positives is not the cohort rate.</li><li><b>Limit:</b> Simulated human reads are cleaner than real ones; the matched normals are the real specificity test.</li><li><b>Limit:</b> The loss is uneven across genes, so gene-level patterns in earlier results are skewed, not just totals.</li><li><b>Next:</b> Run the full cohort, tumours and matched normals, and report tier changes cohort-wide; then WES.</li><li><b>Next:</b> Build the rule into extraction, applied only when the input header shows the affected aligner.</li></ul>
+<footer>Generated 2026-09-30 for pksProfiler.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
 
 </main></body></html>

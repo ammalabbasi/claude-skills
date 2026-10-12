@@ -19,7 +19,7 @@ blocks:
               - {n: "3 / 40", label: pilot samples up a tier, kind: info}
           - h3: What changed
           - list:
-              - "**Pairing:** split mates are rejoined (see the [findings](2026-09-14_pairing_findings.html))."
+              - "**Pairing:** split mates are rejoined."
               - "**Provenance:** the reference checksum is checked on every run."
         asks:
           - {ask: "Default minimum read length: 50 or 70 bp?", detail: "I recommend 70."}

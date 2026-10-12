@@ -30,7 +30,7 @@ it and runs the checks:
 
 > Make a status report for my PI from the review comments in `review_2026-10-01.md`. These are fixed so far: …
 
-> Write up the benchmark in `results/summary.tsv` as a findings report, and link it from row R3 of last week's status report.
+> Write up the benchmark in `results/summary.tsv` as a findings report, and link it from row E1 of last week's status report.
 
 > One-page brief for the committee on where the project stands.
 
@@ -41,7 +41,7 @@ Claude hands back the path to the HTML file. Read it, then attach it yourself.
 | Type | For | Example |
 |---|---|---|
 | `status` | **"Did you do what I asked?"** Sent after a round of fixes. One table per document the reviewer sent, in their numbering; Fixed / In progress / Open / Won't do; ● marks what changed since last time. | [real report, cleaned](examples/2026-10-05_status.html) |
-| `findings` | One experiment or validation: what was tested, the results (tables and bar charts), sanity checks, caveats | [pairing fix](examples/2026-09-14_pairing_findings.html) |
+| `findings` | **"What did this one experiment show?"** The question, the answer, what I tested, what I found, then limits and next steps. | [real report, cleaned](examples/2026-09-30_aligner_findings.html) |
 | `update` | A narrative across topics, ending in "What I need from you". With a `tabs` block it becomes the **multi-area email update**: one tab per area, each self-contained, with its asks at the foot. | [v1.1 update](examples/2026-09-16_update.html) · [tabbed weekly update](examples/2026-09-19_lab_update.html) |
 | `brief` | One screen for people outside the project | [committee brief](examples/2026-09-17_brief.html) |
 

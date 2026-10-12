@@ -18,7 +18,7 @@ identifier patterns (`$HTML_REPORT_PATTERNS`). Local rules override this file wh
 | Type | Answers | Use when |
 |---|---|---|
 | `status` | "Did you do what I asked?" | After a round of fixes, back to the person who gave you the list. One table per document they sent, in their numbering. |
-| `findings` | "What did that experiment show?" | One question with a measured answer. A status row that needs more than a paragraph links to one of these instead of growing. |
+| `findings` | "What did this one experiment show?" | When a single result needs more than a line in a status table; link it from that row. |
 | `update` | "What changed, and what do you need from me?" | Several topics, a reader who has not read the tables, or a decision needed. |
 | `brief` | "Where are we, in one screen?" | Readers outside the project: a committee, a funder, a PI's collaborator. ≤4 tiles, ~450 words. |
 
@@ -67,6 +67,11 @@ Text fields take `**bold**`, `*italic*`, `` `code` ``, `[text](url)`; everything
 `{name, items: [{id, asked, done, status, commit}]}`. Statuses: `fixed`, `progress`, `open`, `wontdo`.
 Count boxes are computed from the items. Nothing else; if a result needs more than a line, write a
 `findings` report and link it from `done`.
+
+**findings** — five parts, always in this order: `question` (the page heading), `answer` (one or two
+sentences with direction and size), `tested` (`[{test, data, n}]`; say which data are simulated, public or
+real-pooled), `found` (`[{heading, text, table | bars | figure}]`, one per test), `limits` and `next`.
+Optional `reproduce` (commands, folded at the bottom; strip it before sharing outside the lab).
 
 **update:** `summary` as a plain string becomes the "In one paragraph" box; `h2` blocks are lettered
 A., B., …; `open`, `asks` (`{ask, detail}`). **brief:** `changed`, `next`, `asks`.

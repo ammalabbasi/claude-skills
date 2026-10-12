@@ -123,12 +123,22 @@ def test_tabs_render_panels_asks_and_scoped_css(examples):
     assert "display:block !important" in s  # print shows every panel
 
 
-def test_nested_tabs_inside_findings(tmp_path):
+def test_nested_tabs(tmp_path):
     inner = {"tabs": [{"label": "Approach", "blocks": [{"p": "a"}]},
                       {"label": "Results", "blocks": [{"p": "b"}]}], "numbered": False}
-    out = build(tmp_path, {"type": "findings", "title": "nested tab test",
+    out = build(tmp_path, {"type": "update", "title": "nested tab test",
                            "blocks": [{"tabs": [{"label": "E1", "heading": "E1", "blocks": [inner]},
                                                 {"label": "E2", "heading": "E2"}]}]})
     s = out.read_text()
     assert 'id="tb2-p2"' in s and '<label for="tb2-1">Approach</label>' in s
     assert not fails(out)
+
+
+def test_findings_has_five_parts_in_order(examples):
+    s = (examples / "2026-09-30_aligner_findings.html").read_text()
+    order = ["<h1>Does the upstream", "<b>Answer.</b>", "<h2>What I tested</h2>", "<h2>What I found</h2>",
+             "<h2>What this doesn't show, and what's next</h2>"]
+    pos = [s.index(x) for x in order]
+    assert pos == sorted(pos)
+    assert s.count("<h3>") == 3 and "<svg class=\"bars\"" in s
+    assert "How to reproduce" not in s  # optional, off unless given
