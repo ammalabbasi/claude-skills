@@ -1,0 +1,207 @@
+# Minimal previous round for the 5 Oct example; only used to mark changed rows.
+type: status
+title: pksProfiler review status
+heading: pksProfiler — status of your review
+project: pksProfiler
+date: '2026-09-29'
+context: Previous round, kept only so the 5 Oct report can mark what changed.
+demo: 'Real report from 5 Oct 2026, cleaned for sharing: names, paths and sample identifiers removed; cohort numbers and commit
+  hashes replaced with placeholders; unpublished findings described only in general terms.'
+bottom_line: Previous round (placeholder).
+sources:
+- name: Your 25 Sep report — §1 code defects
+  items:
+  - id: P0-1
+    asked: Run report asked for parameter names that don't exist and printed the wrong island length.
+    done: Real names and the correct length; an unknown key raises a warning; tested against the workflow.
+    status: fixed
+    commit: 2c7a9f1
+  - id: P0-2
+    asked: Master summary read new-format bin rows with the old reader.
+    done: Reader follows the producer's schema; positivity from the canonical tier.
+    status: fixed
+    commit: 8f03d6e
+  - id: P0-3
+    asked: Alignment-positive, HMM-negative bins were dropped.
+    done: Every bin kept; HMM fields attached when present, explicit NA otherwise.
+    status: fixed
+    commit: 4a6c1b9
+  - id: P0-4
+    asked: Unbinned contigs shown as a genome; missing completeness shown as 0%.
+    done: Shown as community-level evidence; NA stays NA.
+    status: fixed
+    commit: e91d7c2
+  - id: P0-5
+    asked: Cohort report not gated on every output it shows.
+    done: Gated on every lane, and reads only declared inputs; a stale results folder cannot change the report.
+    status: fixed
+    commit: 6b5f0a8
+  - id: P1-1
+    asked: A plotting step lacked its stage label.
+    done: Label added.
+    status: fixed
+    commit: 3d8e2c7
+  - id: P1-2
+    asked: Protein-search rescue ignored the configured filters.
+    done: Filters passed to both consumers.
+    status: fixed
+    commit: 3d8e2c7
+  - id: P1-3
+    asked: Bin alignment parser did not filter the target contig.
+    done: Target enforced; tested with an off-target alignment.
+    status: fixed
+    commit: 3d8e2c7
+  - id: P1-4
+    asked: Prefilter and candidate QC parsed, then discarded.
+    done: Nine QC columns added, with add-up checks.
+    status: fixed
+    commit: a07c4e3
+  - id: P1-5
+    asked: Island plot still on the old coordinate convention.
+    done: Canonical coordinates; boundary tests pass.
+    status: fixed
+    commit: f2b91d0
+  - id: P1-doc
+    asked: Docs mixed two island lengths.
+    done: README and glossary agree.
+    status: fixed
+    commit: f2b91d0
+- name: Your 25 Sep report — §2–4 extraction, alignment, validation
+  items:
+  - id: E0
+    asked: Quantify fragment mode in host depletion before changing it.
+    done: 'Synthetic and real tests: route-dependent reads drop to 0; no tier or read count changed. Now the default.'
+    status: fixed
+    commit: 0c6d4e9
+  - id: E1
+    asked: Extraction sensitivity per cohort setup.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: E2
+    asked: Keep alignment-category counts.
+    done: Categories kept; they must add up to the unchanged total.
+    status: fixed
+    commit: a07c4e3
+  - id: E3
+    asked: Reference digest and program chain for every input.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: E4/V5
+    asked: Read-length and depth dependence of tiers.
+    done: 'Answered: positive rate rises with depth, so prevalence comparisons need depth strata.'
+    status: fixed
+  - id: E5
+    asked: Exact-input-count flag type.
+    done: Coerced properly; same fix for a second flag.
+    status: fixed
+    commit: a07c4e3
+  - id: A1/A2
+    asked: Recruitment coverage rule; island / boundary / flank classes.
+    done: Coverage and boundary rules, mapping-quality cut-off, three classes; your three acceptance tests pass.
+    status: fixed
+    commit: 1e8b5a2
+  - id: A3/V6
+    asked: Target-read loss at each depletion stage.
+    done: Answered by simulation (host depletion loses almost nothing); real-data trace now exists (L4).
+    status: fixed
+  - id: A4
+    asked: Explicit aligner parameters.
+    done: Named in the command and the run report.
+    status: fixed
+    commit: b49e7f3
+  - id: A5
+    asked: Divergence QC, not presented as specificity.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: A6
+    asked: Rename a mapped-read metric.
+    done: Renamed everywhere.
+    status: fixed
+    commit: a07c4e3
+  - id: A7
+    asked: Mate-tag self-checks.
+    done: Counts in recruitment and pairing stats.
+    status: fixed
+    commit: 5f3b8d1
+  - id: A8
+    asked: Remove scratch-file I/O in recruitment.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: A9
+    asked: Clarify the coverage track.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: V1
+    asked: Recompute tiers on the corrected island length.
+    done: 0 tier changes.
+    status: fixed
+  - id: V2
+    asked: Fragment-collapsed counts as a sensitivity check.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: V3/V4
+    asked: 'Technical-bias package: aligner and provenance.'
+    done: As reported on 29 Sep.
+    status: progress
+  - id: V7
+    asked: Recruitment classes on real samples.
+    done: Defaults reproduce the pipeline's own classes on every assembled pilot tumour.
+    status: fixed
+  - id: V8
+    asked: Locus specificity and carrier attribution, kept separate.
+    done: As reported on 29 Sep.
+    status: progress
+- name: Your 26 Sep mode memo
+  items:
+  - id: M1
+    asked: How were the cohort's WGS/WES/RNA samples run; do results need regenerating?
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M2
+    asked: Tiers for WGS only.
+    done: Other modes report evidence, untiered.
+    status: fixed
+    commit: 3f1c7b5
+  - id: M3
+    asked: Process matched normals identically.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M4
+    asked: Every sample type maps to a real branch.
+    done: Four modes; old names fail with the new one.
+    status: fixed
+    commit: c8e5f19
+  - id: M5
+    asked: WES lane, evidence only.
+    done: Own schema, no tiers.
+    status: fixed
+    commit: 4b9a6d3
+  - id: M6
+    asked: WES-specific QC.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M7
+    asked: RNA lane with splice-aware depletion.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M8
+    asked: RNA library type and RNA-specific QC.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M9
+    asked: Metagenome pairing and reads per million.
+    done: Pairs rebuilt; reads per million is the primary number.
+    status: fixed
+    commit: 5f3b8d1
+  - id: M10
+    asked: Benchmark metagenome prefiltering.
+    done: Not run; the prefilter stays off, so no result depends on it.
+    status: open
+  - id: M11
+    asked: Separate read-level taxonomy from carrier evidence.
+    done: As reported on 29 Sep.
+    status: progress
+  - id: M12
+    asked: One real execution test per mode.
+    done: As reported on 29 Sep.
+    status: progress

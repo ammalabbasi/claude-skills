@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme:light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="generator" content="html-report">
+<meta name="html-report-type" content="status">
+<title>pksProfiler review status</title>
+<style>
+  /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
+  :root { color-scheme: light;
+    --plane:#f7f7f5; --surface:#ffffff; --soft:#f2f3f5; --ink:#111111; --ink-2:#444444;
+    --mute:#666666; --rule:#dddddd; --rule-2:#eeeeee;
+    --accent:#2166ac; --accent-soft:#e8f0fc;
+    --ok:#1e7d34;   --ok-soft:#e5f4ec;     /* fixed / done / pass   */
+    --info:#1660a8; --info-soft:#e8f0fc;   /* validated / answered  */
+    --chg:#a35d00;  --chg-soft:#fbf0e0;    /* changed / in progress */
+    --bad:#b3261e;  --bad-soft:#fbe9e7;    /* open / failed / risk  */
+    --park:#6e6e73; --park-soft:#f2f2f2;   /* deferred / parked     */
+    --dec:#6b4fb3;                          /* needs his decision    */
+    --nf:#8a1538; }                         /* asked, not found in code */
+  * { box-sizing:border-box; }
+  html, body { background:var(--plane); color:var(--ink); margin:0; }
+  body { font:14.5px/1.55 Arial, Helvetica, sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:28px 16px 60px; }
+
+  h1 { font-size:23px; margin:0 0 4px; }
+  h2 { font-size:18px; margin:34px 0 8px; padding-bottom:5px; border-bottom:2px solid var(--accent); }
+  h2 .cnt { font-weight:normal; color:var(--mute); font-size:13px; }
+  h3 { font-size:15px; margin:18px 0 6px; }
+  p { margin:0 0 10px; max-width:88ch; }
+  ul, ol { padding-left:20px; margin:0 0 10px; } li { margin:3px 0; }
+  .meta, .muted { color:var(--mute); font-size:12.5px; }
+  .meta { margin:2px 0 0; }
+  code { font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.86em;
+         background:var(--soft); padding:1px 4px; border-radius:3px; overflow-wrap:anywhere; }
+  pre { background:var(--soft); border:1px solid var(--rule); border-radius:6px; padding:10px 12px;
+        overflow-x:auto; font-size:12.5px; line-height:1.45; }
+  pre code { background:none; padding:0; }
+
+  /* KPI tiles: a number and a label, nothing else */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin:18px 0 8px; }
+  .tile { background:var(--surface); border:1px solid var(--rule); border-left:5px solid var(--rule);
+          border-radius:6px; padding:10px 14px; }
+  .tile .n { font-size:24px; font-weight:bold; font-variant-numeric:tabular-nums; }
+  .tile .l { font-size:12px; color:var(--mute); }
+  .tile.ok { border-left-color:var(--ok); } .tile.info { border-left-color:var(--info); }
+  .tile.chg { border-left-color:var(--chg); } .tile.bad { border-left-color:var(--bad); }
+  .tile.park { border-left-color:var(--park); } .tile.dec { border-left-color:var(--dec); }
+  .tile.nf { border-left-color:var(--nf); }
+
+  /* Callouts: the bottom line, a warning, or an ask */
+  .note { background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--accent);
+          border-radius:6px; padding:12px 15px; margin:14px 0; }
+  .note > b:first-child { display:block; margin-bottom:3px; }
+  .note.ok { border-left-color:var(--ok); } .note.chg { border-left-color:var(--chg); }
+  .note.bad { border-left-color:var(--bad); background:#fffaf9; }
+
+  /* Cards for prose-heavy sections */
+  .card { background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:16px 20px; margin:12px 0; }
+
+  /* Tables: always inside .tw so wide tables scroll instead of breaking the page */
+  .tw { overflow-x:auto; margin:8px 0 14px; }
+  table { border-collapse:collapse; width:100%; background:var(--surface); border:1px solid var(--rule);
+          font-size:13.5px; }
+  th, td { text-align:left; vertical-align:top; padding:8px 10px; border-bottom:1px solid var(--rule-2); }
+  th { background:#fafafa; color:var(--mute); font-size:11.5px; font-weight:bold;
+       text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--rule); }
+  tr:last-child td { border-bottom:none; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.id { font-weight:bold; white-space:nowrap; border-left:4px solid var(--rule-2); }
+  td.id.bad { border-left-color:var(--bad); } td.id.chg { border-left-color:var(--chg); }
+  td.st { white-space:nowrap; }
+
+  /* Status pills: one vocabulary across every report */
+  .pill { display:inline-block; font-size:11px; font-weight:bold; padding:2px 8px; border-radius:10px;
+          white-space:nowrap; vertical-align:1px; }
+  .pill.ok { background:var(--ok); color:#fff; }       /* Fixed, Done, Pass      */
+  .pill.info { background:var(--info); color:#fff; }   /* Validated, Answered    */
+  .pill.chg { background:var(--chg); color:#fff; }     /* In progress, Changed   */
+  .pill.bad { background:#fff; color:var(--bad); border:1px solid var(--bad); }  /* Open, Failed */
+  .pill.park { background:var(--park-soft); color:#555; border:1px solid var(--rule); } /* Deferred */
+  .pill.dec { background:var(--dec); color:#fff; }    /* Decision needed        */
+  .pill.nf { background:var(--nf); color:#fff; }      /* Not found              */
+  .chg-mark { color:var(--chg); font-weight:bold; }   /* ● changed since the last report */
+  tr.changed td.id { border-left-color:var(--chg); }
+  .up { color:var(--ok); font-weight:bold; } .down { color:var(--bad); font-weight:bold; }
+
+  /* Figures: embedded PNG (base64) or inline SVG, always with a caption */
+  figure { margin:14px 0; background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:10px; }
+  figure img, figure svg { display:block; max-width:100%; height:auto; margin:0 auto; }
+  figcaption { font-size:12.5px; color:var(--ink-2); margin-top:8px; }
+  figcaption b { color:var(--ink); }
+
+  details { background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:8px 14px; margin:10px 0; }
+  summary { cursor:pointer; color:var(--accent); font-weight:bold; font-size:13.5px; }
+  details[open] summary { margin-bottom:8px; }
+
+  .key { display:flex; flex-wrap:wrap; gap:16px; font-size:11.5px; color:var(--mute); margin:8px 2px 0; }
+  .key i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+
+  footer { margin-top:36px; padding-top:10px; border-top:1px solid var(--rule); color:var(--mute);
+           font-size:12px; line-height:1.7; }
+
+  /* Long status tables: add class="stack" so rows become cards on a phone.
+     Put data-label="..." on each <td> for the field name. */
+  @media (max-width: 720px) {
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display:block; width:100%; }
+    table.stack thead { display:none; }
+    table.stack { border:none; background:none; }
+    table.stack tr { background:var(--surface); border:1px solid var(--rule); border-radius:6px; margin:0 0 10px; padding:6px 10px; }
+    table.stack td { border:none; padding:3px 0; }
+    table.stack td[data-label]::before { content:attr(data-label) ": "; font-weight:bold; color:var(--mute); }
+  }
+  @media (max-width: 640px) {
+    main { padding:20px 16px 48px; }
+    h1 { font-size:20px; }
+    .tile .n { font-size:20px; }
+  }
+  @media print {
+    html, body { background:#fff; }
+    main { max-width:none; padding:0; }
+    .tile, .note, .card, figure, table, details { break-inside:avoid; }
+    h2 { break-after:avoid; }
+    details:not([open]) > *:not(summary) { display:block; }
+    a { color:inherit; text-decoration:none; }
+  }
+
+  /* Additions for html-report */
+  td.id .sev { display:block; font-weight:normal; font-size:10px; color:var(--mute); margin-top:3px; }
+  td .more { font-size:12.5px; white-space:nowrap; }
+  .attn { background:#fff6f5; border:1px solid #f1c9c5; border-radius:6px; padding:10px 16px; margin:14px 0; }
+  .attn h3 { margin:6px 0; font-size:15px; }
+  .attn ul { margin:4px 0 8px; }
+  svg.bars text { font:12px Arial, Helvetica, sans-serif; fill:var(--ink); }
+  svg.bars text.v { fill:var(--ink-2); }
+  svg.bars line { stroke:var(--rule); }
+  ol.asks li { margin:0 0 9px; }
+  /* brief: one screen, one page when printed */
+  main.brief { max-width:760px; }
+  main.brief h2 { font-size:16px; margin:22px 0 6px; }
+  .demo { background:#fffbe6; border:1px dashed #d4b106; border-radius:6px; padding:6px 12px; font-size:12.5px; margin:0 0 14px; }
+  /* Tabs: CSS only, no JavaScript. Printing, or a viewer without CSS, shows every panel in order. */
+  .tabs { margin-top:20px; }
+  .tabs > input { position:absolute; opacity:0; pointer-events:none; }
+  .tabbar { display:flex; flex-wrap:wrap; gap:4px; border-bottom:1px solid var(--rule); }
+  .tabbar label { padding:9px 14px; font-size:13.5px; font-weight:bold; color:var(--mute); cursor:pointer;
+                  border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; white-space:nowrap; }
+  .tabbar label:hover { color:var(--ink); background:var(--soft); }
+  .tabs > .panel { display:none; padding-top:6px; }
+  .tabs > .panel > h2:first-child { border-bottom:none; margin-top:14px; }
+  p.lede { color:var(--ink-2); font-size:15px; }
+  @media (max-width: 640px) { .tabbar label { padding:7px 9px; font-size:12.5px; white-space:normal; } }
+  @media print {
+    .tabbar { display:none; }
+    .tabs > .panel { display:block !important; break-before:page; }
+  }
+</style>
+</head>
+<body><main>
+
+<h1>pksProfiler — status of your review</h1>
+<p class="meta">Your 25 Sep validation report, 26 Sep mode memo and 1 Oct reply (L1–L10) · release-candidate branch at <code>c41e9a7</code>, pushed, not yet merged &middot; 2026-10-05</p>
+<div class="demo">Real report from 5 Oct 2026, cleaned for sharing: names, paths and sample identifiers removed; cohort numbers and commit hashes replaced with placeholders; unpublished findings described only in general terms.</div>
+<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">48</div><div class="l">fixed</div></div>
+<div class="tile chg" data-status="progress"><div class="n">1</div><div class="l">in progress</div></div>
+<div class="tile bad" data-status="open"><div class="n">3</div><div class="l">open</div></div></div>
+<div class="note"><b>Bottom line.</b> The full validation you asked for before freezing the corrected extraction rule is clean, and the rule is in the release candidate. On every tumour in the cohort it moves some samples up exactly one tier and none down; matched normals do not change. The WES and RNA sets were rerun rather than relabelled, which reverses the 29 Sep plan. The full WGS rerun is next.</div>
+<p class="muted"><span class="chg-mark">&#9679;</span> = changed since your 2026-09-29 report</p>
+<h2>Your 1 Oct reply (L1–L10)</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr class="changed"><td class="id" data-label="ID">L1 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Full cohort, tumours and matched normals: tier transitions and changes in reads, genes and island breadth.</td><td data-label="Did">600 / 600 runs done. Tumours: 52 up exactly one tier, 0 down. Normals: unchanged in 300 / 300. Old tiers recompute identically.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L2 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Repeat the validation for WES.</td><td data-label="Did">900 / 900 rerun. Tumour reads on target genes up by about 80%; no sample loses reads. Normal gains are much smaller; a blood-vs-tissue split is the follow-up.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Make the rescue aligner-aware.</td><td data-label="Did">On only when the input header shows the affected aligner; otherwise off and byte-identical to the old rule.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>7b2e0d4</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L4 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">QC: aligner settings per sample, and how many rescued reads survive each stage.</td><td data-label="Did">Per-sample header table and per-stage counts, checked to only decrease; summarised in the run report.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>5d81c3a</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L5 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Regression tests, including the score boundary.</td><td data-label="Did">Tests on both sides of the cut-off, on both mates and an unpaired read; the boundary follows the setting.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>9e4f2b6</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L6 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">FASTQ vs corrected BAM on the same sample.</td><td data-label="Did">2 samples: the corrected BAM recovers as many target reads as the FASTQ route; the old rule recovers under half.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L7 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Recheck tier calibration on the corrected data.</td><td data-label="Did">Thresholds hold; no recalibration. To repeat on the full WGS rerun.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L8 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Validate the companion profiler on a broad panel before assuming the same impact.</td><td data-label="Did">Deferred: no work on that pipeline right now. Not assumed in the meantime.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L9 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Keep this as a paper validation figure.</td><td data-label="Did">Material ready (aligner sweep, control, per-gene loss, L1/L2); figure not yet drafted.</td><td class="st" data-label="Status"><span class="pill chg" data-status="progress">In progress</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">L10 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Did earlier papers account for this aligner setting?</td><td data-label="Did">None of the methods we could check do; written up separately.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+</tbody></table></div>
+<h2>Your 25 Sep report — §1 code defects</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr><td class="id" data-label="ID">P0-1</td><td data-label="Asked">Run report asked for parameter names that don&#x27;t exist and printed the wrong island length.</td><td data-label="Did">Real names and the correct length; an unknown key raises a warning; tested against the workflow.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>2c7a9f1</code></td></tr>
+<tr><td class="id" data-label="ID">P0-2</td><td data-label="Asked">Master summary read new-format bin rows with the old reader.</td><td data-label="Did">Reader follows the producer&#x27;s schema; positivity from the canonical tier.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>8f03d6e</code></td></tr>
+<tr><td class="id" data-label="ID">P0-3</td><td data-label="Asked">Alignment-positive, HMM-negative bins were dropped.</td><td data-label="Did">Every bin kept; HMM fields attached when present, explicit NA otherwise.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>4a6c1b9</code></td></tr>
+<tr><td class="id" data-label="ID">P0-4</td><td data-label="Asked">Unbinned contigs shown as a genome; missing completeness shown as 0%.</td><td data-label="Did">Shown as community-level evidence; NA stays NA.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>e91d7c2</code></td></tr>
+<tr><td class="id" data-label="ID">P0-5</td><td data-label="Asked">Cohort report not gated on every output it shows.</td><td data-label="Did">Gated on every lane, and reads only declared inputs; a stale results folder cannot change the report.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>6b5f0a8</code></td></tr>
+<tr><td class="id" data-label="ID">P1-1</td><td data-label="Asked">A plotting step lacked its stage label.</td><td data-label="Did">Label added.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>3d8e2c7</code></td></tr>
+<tr><td class="id" data-label="ID">P1-2</td><td data-label="Asked">Protein-search rescue ignored the configured filters.</td><td data-label="Did">Filters passed to both consumers.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>3d8e2c7</code></td></tr>
+<tr><td class="id" data-label="ID">P1-3</td><td data-label="Asked">Bin alignment parser did not filter the target contig.</td><td data-label="Did">Target enforced; tested with an off-target alignment.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>3d8e2c7</code></td></tr>
+<tr><td class="id" data-label="ID">P1-4</td><td data-label="Asked">Prefilter and candidate QC parsed, then discarded.</td><td data-label="Did">Nine QC columns added, with add-up checks.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a07c4e3</code></td></tr>
+<tr><td class="id" data-label="ID">P1-5</td><td data-label="Asked">Island plot still on the old coordinate convention.</td><td data-label="Did">Canonical coordinates; boundary tests pass.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f2b91d0</code></td></tr>
+<tr><td class="id" data-label="ID">P1-doc</td><td data-label="Asked">Docs mixed two island lengths.</td><td data-label="Did">README and glossary agree.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f2b91d0</code></td></tr>
+</tbody></table></div>
+<h2>Your 25 Sep report — §2–4 extraction, alignment, validation</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr><td class="id" data-label="ID">E0</td><td data-label="Asked">Quantify fragment mode in host depletion before changing it.</td><td data-label="Did">Synthetic and real tests: route-dependent reads drop to 0; no tier or read count changed. Now the default.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>0c6d4e9</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">E1 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Extraction sensitivity per cohort setup.</td><td data-label="Did">Confirmed and fixed: an upstream aligner setting left some target reads mapped. Validated in L1, L2, L7.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>7b2e0d4</code></td></tr>
+<tr><td class="id" data-label="ID">E2</td><td data-label="Asked">Keep alignment-category counts.</td><td data-label="Did">Categories kept; they must add up to the unchanged total.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a07c4e3</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">E3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Reference digest and program chain for every input.</td><td data-label="Did">Recorded for every input and in the run report; WES and RNA reruns captured.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>5d81c3a</code></td></tr>
+<tr><td class="id" data-label="ID">E4/V5</td><td data-label="Asked">Read-length and depth dependence of tiers.</td><td data-label="Did">Answered: positive rate rises with depth, so prevalence comparisons need depth strata.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr><td class="id" data-label="ID">E5</td><td data-label="Asked">Exact-input-count flag type.</td><td data-label="Did">Coerced properly; same fix for a second flag.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a07c4e3</code></td></tr>
+<tr><td class="id" data-label="ID">A1/A2</td><td data-label="Asked">Recruitment coverage rule; island / boundary / flank classes.</td><td data-label="Did">Coverage and boundary rules, mapping-quality cut-off, three classes; your three acceptance tests pass.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>1e8b5a2</code></td></tr>
+<tr><td class="id" data-label="ID">A3/V6</td><td data-label="Asked">Target-read loss at each depletion stage.</td><td data-label="Did">Answered by simulation (host depletion loses almost nothing); real-data trace now exists (L4).</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr><td class="id" data-label="ID">A4</td><td data-label="Asked">Explicit aligner parameters.</td><td data-label="Did">Named in the command and the run report.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b49e7f3</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">A5 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Divergence QC, not presented as specificity.</td><td data-label="Did">Divergence from the reference strain, overall and per gene.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>d6a2c18</code></td></tr>
+<tr><td class="id" data-label="ID">A6</td><td data-label="Asked">Rename a mapped-read metric.</td><td data-label="Did">Renamed everywhere.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a07c4e3</code></td></tr>
+<tr><td class="id" data-label="ID">A7</td><td data-label="Asked">Mate-tag self-checks.</td><td data-label="Did">Counts in recruitment and pairing stats.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>5f3b8d1</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">A8 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Remove scratch-file I/O in recruitment.</td><td data-label="Did">Streams directly now; outputs byte-identical (tested).</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>8c7e1a4</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">A9 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Clarify the coverage track.</td><td data-label="Did">Bin size explicit and in the file name; documented.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>8c7e1a4</code></td></tr>
+<tr><td class="id" data-label="ID">V1</td><td data-label="Asked">Recompute tiers on the corrected island length.</td><td data-label="Did">0 tier changes.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">V2 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Fragment-collapsed counts as a sensitivity check.</td><td data-label="Did">Tiers stay on raw reads; every sample also reports collapsed counts and a stability flag.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>9e4f2b6</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">V3/V4 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Technical-bias package: aligner and provenance.</td><td data-label="Did">Aligner sweep and control done; provenance is E2/E3.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr><td class="id" data-label="ID">V7</td><td data-label="Asked">Recruitment classes on real samples.</td><td data-label="Did">Defaults reproduce the pipeline&#x27;s own classes on every assembled pilot tumour.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">V8 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Locus specificity and carrier attribution, kept separate.</td><td data-label="Did">Two optional lanes, reported as two results; a lane bug found in the pilot is fixed.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>2a9d6f0</code></td></tr>
+</tbody></table></div>
+<h2>Your 26 Sep mode memo</h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What I did</th><th>Status</th></tr></thead><tbody>
+<tr class="changed"><td class="id" data-label="ID">M1 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">How were the cohort&#x27;s WGS/WES/RNA samples run; do results need regenerating?</td><td data-label="Did">WES and RNA rerun on the release candidate (not relabelled, reversing 29 Sep); WGS rerun after the pilot.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span></td></tr>
+<tr><td class="id" data-label="ID">M2</td><td data-label="Asked">Tiers for WGS only.</td><td data-label="Did">Other modes report evidence, untiered.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>3f1c7b5</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Process matched normals identically.</td><td data-label="Did">Same steps by construction; tested byte-identical.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>7a4d2e8</code></td></tr>
+<tr><td class="id" data-label="ID">M4</td><td data-label="Asked">Every sample type maps to a real branch.</td><td data-label="Did">Four modes; old names fail with the new one.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>c8e5f19</code></td></tr>
+<tr><td class="id" data-label="ID">M5</td><td data-label="Asked">WES lane, evidence only.</td><td data-label="Did">Own schema, no tiers.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>4b9a6d3</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M6 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">WES-specific QC.</td><td data-label="Did">Duplicate fractions added; capture fraction waits for a capture file we don&#x27;t have.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M7 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">RNA lane with splice-aware depletion.</td><td data-label="Did">In place; references downloadable with checksums.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>1d7f3c6</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M8 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">RNA library type and RNA-specific QC.</td><td data-label="Did">Recorded; RNA field names; no tiers.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>e3b2a95</code></td></tr>
+<tr><td class="id" data-label="ID">M9</td><td data-label="Asked">Metagenome pairing and reads per million.</td><td data-label="Did">Pairs rebuilt; reads per million is the primary number.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>5f3b8d1</code></td></tr>
+<tr><td class="id" data-label="ID">M10</td><td data-label="Asked">Benchmark metagenome prefiltering.</td><td data-label="Did">Not run; the prefilter stays off, so no result depends on it.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M11 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Separate read-level taxonomy from carrier evidence.</td><td data-label="Did">Wording fixed and tested across docs and code.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>6c0e8b4</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">M12 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">One real execution test per mode.</td><td data-label="Did">8 / 8 pass; CI runs them.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>0a5d9c2</code></td></tr>
+</tbody></table></div>
+<footer>Generated 2026-10-05 for pksProfiler.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+
+</main></body></html>

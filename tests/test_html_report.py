@@ -48,21 +48,21 @@ def test_every_example_builds_and_passes(examples):
 
 
 def test_status_tiles_are_counted_from_items(examples):
-    s = (examples / "2026-09-15_status.html").read_text()
+    s = (examples / "2026-10-05_status.html").read_text()
     tiles = dict(re.findall(r'data-status="(\w+)"><div class="n">(\d+)<', s))
-    assert tiles == {"fixed": "6", "open": "1", "wontdo": "1"}
+    assert tiles == {"fixed": "48", "progress": "1", "open": "3"}
 
 
 def test_status_has_one_table_per_source(examples):
-    s = (examples / "2026-09-15_status.html").read_text()
-    assert s.count("<table") == 2
-    assert "<h2>Your 10 Sep follow-up (S1–S3)</h2>" in s
+    s = (examples / "2026-10-05_status.html").read_text()
+    assert s.count("<table") == 4
+    assert "<h2>Your 1 Oct reply (L1–L10)</h2>" in s
 
 
 def test_changed_rows_are_marked_against_previous_round(examples):
-    s = (examples / "2026-09-15_status.html").read_text()
-    changed = re.findall(r'<tr class="changed"><td[^>]*>(\w+)', s)
-    assert sorted(changed) == ["R3", "R4", "S1", "S2", "S3"]
+    s = (examples / "2026-10-05_status.html").read_text()
+    changed = re.findall(r'<tr class="changed"><td[^>]*>([\w/-]+)', s)
+    assert len(changed) == 25 and "L1" in changed and "P0-1" not in changed
 
 
 def test_only_four_statuses(tmp_path):
@@ -94,8 +94,8 @@ def test_checker_catches(tmp_path, inject, expect):
 
 
 def test_checker_catches_hand_edited_tile(tmp_path, examples):
-    p = examples / "2026-09-15_status.html"
-    p.write_text(p.read_text().replace('data-status="fixed"><div class="n">6<', 'data-status="fixed"><div class="n">7<'))
+    p = examples / "2026-10-05_status.html"
+    p.write_text(p.read_text().replace('data-status="fixed"><div class="n">48<', 'data-status="fixed"><div class="n">47<'))
     assert any("tile 'fixed'" in f for f in fails(p))
 
 

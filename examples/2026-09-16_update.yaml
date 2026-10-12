@@ -3,7 +3,7 @@ title: Example project project update
 heading: Example project — what changed in v1.1.0, and what it does to the results
 project: Example project
 date: 2026-09-16
-meta: Update for the steering group · detail by item in the [15 Sep status report](2026-09-15_status.html)
+meta: Update for the steering group
 demo: "Example report. The project, the reviewer and every number are invented."
 summary: >-
   All review findings are fixed and v1.1.0 is tagged. The one change that moves results is the read-pairing fix:
