@@ -1,0 +1,37 @@
+# STATUS — answers the reviewer's numbered asks, in THEIR numbering.
+# Tiles are counted from the items; never type counts by hand.
+type: status
+mode: round                 # round = this round's changes; ledger = everything ever asked, cumulative
+title: REPLACE code review status        # <title>, 2-6 words
+heading: REPLACE — code review status    # optional <h1>; defaults to title
+project: REPLACE
+date: REPLACE                            # YYYY-MM-DD
+meta: >-
+  Your REPLACE report (REPLACE item range) · branch `REPLACE` at `REPLACE`, REPLACE pushed/merged/tagged ·
+  supersedes the REPLACE attachment
+# previous: 2026-09-01_status.yaml       # last round's spec: rows that changed get a ● and a tile
+tests: {now: 0, before: 0, since: REPLACE}   # becomes "N tests, from M on <since>"; delete if not relevant
+summary:
+  headline: REPLACE — the one sentence they need if they read nothing else.
+  body: REPLACE — which of their conditions are met, the headline numbers, anything reversed, the one thing still open.
+
+# Items inline, or in a TSV with columns: section, id, priority, asked, done, status, commit, link
+# items_tsv: items.tsv
+sections:
+  - title: Your REPLACE report
+    sub: REPLACE (optional; defaults to the item count)
+    items:
+      - id: REPLACE
+        priority: P0            # optional: P0/critical (red), P1/high (orange)
+        asked: REPLACE — their ask, paraphrased tight.
+        done: REPLACE — what was done and the check that proves it.
+        status: fixed           # fixed done validated answered progress decision open failed notfound deferred
+        commit: REPLACE
+        link: "[details](REPLACE_findings.html)"   # optional: a findings report for anything longer than a paragraph
+
+running:
+  - REPLACE — job, scope, what it will answer, expected finish.
+outside:
+  - {item: REPLACE, where: REPLACE, status: deferred}
+# discrepancies: [ ... ]   # ledger mode: where an earlier report and the code disagree
+methods: {summary: Commands and paths, code: "REPLACE"}

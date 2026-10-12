@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme:light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="generator" content="html-report">
+<meta name="html-report-type" content="status">
+<title>readsieve code review status</title>
+<style>
+  /* Lab house style. Light only, by rule: never add a dark-mode media query or theme toggle. */
+  :root { color-scheme: light;
+    --plane:#f7f7f5; --surface:#ffffff; --soft:#f2f3f5; --ink:#111111; --ink-2:#444444;
+    --mute:#666666; --rule:#dddddd; --rule-2:#eeeeee;
+    --accent:#2166ac; --accent-soft:#e8f0fc;
+    --ok:#1e7d34;   --ok-soft:#e5f4ec;     /* fixed / done / pass   */
+    --info:#1660a8; --info-soft:#e8f0fc;   /* validated / answered  */
+    --chg:#a35d00;  --chg-soft:#fbf0e0;    /* changed / in progress */
+    --bad:#b3261e;  --bad-soft:#fbe9e7;    /* open / failed / risk  */
+    --park:#6e6e73; --park-soft:#f2f2f2;   /* deferred / parked     */
+    --dec:#6b4fb3;                          /* needs his decision    */
+    --nf:#8a1538; }                         /* asked, not found in code */
+  * { box-sizing:border-box; }
+  html, body { background:var(--plane); color:var(--ink); margin:0; }
+  body { font:14.5px/1.55 Arial, Helvetica, sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:28px 16px 60px; }
+
+  h1 { font-size:23px; margin:0 0 4px; }
+  h2 { font-size:18px; margin:34px 0 8px; padding-bottom:5px; border-bottom:2px solid var(--accent); }
+  h2 .cnt { font-weight:normal; color:var(--mute); font-size:13px; }
+  h3 { font-size:15px; margin:18px 0 6px; }
+  p { margin:0 0 10px; max-width:88ch; }
+  ul, ol { padding-left:20px; margin:0 0 10px; } li { margin:3px 0; }
+  .meta, .muted { color:var(--mute); font-size:12.5px; }
+  .meta { margin:2px 0 0; }
+  code { font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.86em;
+         background:var(--soft); padding:1px 4px; border-radius:3px; overflow-wrap:anywhere; }
+  pre { background:var(--soft); border:1px solid var(--rule); border-radius:6px; padding:10px 12px;
+        overflow-x:auto; font-size:12.5px; line-height:1.45; }
+  pre code { background:none; padding:0; }
+
+  /* KPI tiles: a number and a label, nothing else */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin:18px 0 8px; }
+  .tile { background:var(--surface); border:1px solid var(--rule); border-left:5px solid var(--rule);
+          border-radius:6px; padding:10px 14px; }
+  .tile .n { font-size:24px; font-weight:bold; font-variant-numeric:tabular-nums; }
+  .tile .l { font-size:12px; color:var(--mute); }
+  .tile.ok { border-left-color:var(--ok); } .tile.info { border-left-color:var(--info); }
+  .tile.chg { border-left-color:var(--chg); } .tile.bad { border-left-color:var(--bad); }
+  .tile.park { border-left-color:var(--park); } .tile.dec { border-left-color:var(--dec); }
+  .tile.nf { border-left-color:var(--nf); }
+
+  /* Callouts: the bottom line, a warning, or an ask */
+  .note { background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--accent);
+          border-radius:6px; padding:12px 15px; margin:14px 0; }
+  .note > b:first-child { display:block; margin-bottom:3px; }
+  .note.ok { border-left-color:var(--ok); } .note.chg { border-left-color:var(--chg); }
+  .note.bad { border-left-color:var(--bad); background:#fffaf9; }
+
+  /* Cards for prose-heavy sections */
+  .card { background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:16px 20px; margin:12px 0; }
+
+  /* Tables: always inside .tw so wide tables scroll instead of breaking the page */
+  .tw { overflow-x:auto; margin:8px 0 14px; }
+  table { border-collapse:collapse; width:100%; background:var(--surface); border:1px solid var(--rule);
+          font-size:13.5px; }
+  th, td { text-align:left; vertical-align:top; padding:8px 10px; border-bottom:1px solid var(--rule-2); }
+  th { background:#fafafa; color:var(--mute); font-size:11.5px; font-weight:bold;
+       text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--rule); }
+  tr:last-child td { border-bottom:none; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.id { font-weight:bold; white-space:nowrap; border-left:4px solid var(--rule-2); }
+  td.id.bad { border-left-color:var(--bad); } td.id.chg { border-left-color:var(--chg); }
+  td.st { white-space:nowrap; }
+
+  /* Status pills: one vocabulary across every report */
+  .pill { display:inline-block; font-size:11px; font-weight:bold; padding:2px 8px; border-radius:10px;
+          white-space:nowrap; vertical-align:1px; }
+  .pill.ok { background:var(--ok); color:#fff; }       /* Fixed, Done, Pass      */
+  .pill.info { background:var(--info); color:#fff; }   /* Validated, Answered    */
+  .pill.chg { background:var(--chg); color:#fff; }     /* In progress, Changed   */
+  .pill.bad { background:#fff; color:var(--bad); border:1px solid var(--bad); }  /* Open, Failed */
+  .pill.park { background:var(--park-soft); color:#555; border:1px solid var(--rule); } /* Deferred */
+  .pill.dec { background:var(--dec); color:#fff; }    /* Decision needed        */
+  .pill.nf { background:var(--nf); color:#fff; }      /* Not found              */
+  .chg-mark { color:var(--chg); font-weight:bold; }   /* ● changed since the last report */
+  tr.changed td.id { border-left-color:var(--chg); }
+  .up { color:var(--ok); font-weight:bold; } .down { color:var(--bad); font-weight:bold; }
+
+  /* Figures: embedded PNG (base64) or inline SVG, always with a caption */
+  figure { margin:14px 0; background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:10px; }
+  figure img, figure svg { display:block; max-width:100%; height:auto; margin:0 auto; }
+  figcaption { font-size:12.5px; color:var(--ink-2); margin-top:8px; }
+  figcaption b { color:var(--ink); }
+
+  details { background:var(--surface); border:1px solid var(--rule); border-radius:6px; padding:8px 14px; margin:10px 0; }
+  summary { cursor:pointer; color:var(--accent); font-weight:bold; font-size:13.5px; }
+  details[open] summary { margin-bottom:8px; }
+
+  .key { display:flex; flex-wrap:wrap; gap:16px; font-size:11.5px; color:var(--mute); margin:8px 2px 0; }
+  .key i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+
+  footer { margin-top:36px; padding-top:10px; border-top:1px solid var(--rule); color:var(--mute);
+           font-size:12px; line-height:1.7; }
+
+  /* Long status tables: add class="stack" so rows become cards on a phone.
+     Put data-label="..." on each <td> for the field name. */
+  @media (max-width: 720px) {
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display:block; width:100%; }
+    table.stack thead { display:none; }
+    table.stack { border:none; background:none; }
+    table.stack tr { background:var(--surface); border:1px solid var(--rule); border-radius:6px; margin:0 0 10px; padding:6px 10px; }
+    table.stack td { border:none; padding:3px 0; }
+    table.stack td[data-label]::before { content:attr(data-label) ": "; font-weight:bold; color:var(--mute); }
+  }
+  @media (max-width: 640px) {
+    main { padding:20px 16px 48px; }
+    h1 { font-size:20px; }
+    .tile .n { font-size:20px; }
+  }
+  @media print {
+    html, body { background:#fff; }
+    main { max-width:none; padding:0; }
+    .tile, .note, .card, figure, table, details { break-inside:avoid; }
+    h2 { break-after:avoid; }
+    details:not([open]) > *:not(summary) { display:block; }
+    a { color:inherit; text-decoration:none; }
+  }
+
+  /* Additions for html-report */
+  td.id .sev { display:block; font-weight:normal; font-size:10px; color:var(--mute); margin-top:3px; }
+  td .more { font-size:12.5px; white-space:nowrap; }
+  .attn { background:#fff6f5; border:1px solid #f1c9c5; border-radius:6px; padding:10px 16px; margin:14px 0; }
+  .attn h3 { margin:6px 0; font-size:15px; }
+  .attn ul { margin:4px 0 8px; }
+  svg.bars text { font:12px Arial, Helvetica, sans-serif; fill:var(--ink); }
+  svg.bars text.v { fill:var(--ink-2); }
+  svg.bars line { stroke:var(--rule); }
+  ol.asks li { margin:0 0 9px; }
+  /* brief: one screen, one page when printed */
+  main.brief { max-width:760px; }
+  main.brief h2 { font-size:16px; margin:22px 0 6px; }
+  .demo { background:#fffbe6; border:1px dashed #d4b106; border-radius:6px; padding:6px 12px; font-size:12.5px; margin:0 0 14px; }
+  /* Tabs: CSS only, no JavaScript. Printing, or a viewer without CSS, shows every panel in order. */
+  .tabs { margin-top:20px; }
+  .tabs > input { position:absolute; opacity:0; pointer-events:none; }
+  .tabbar { display:flex; flex-wrap:wrap; gap:4px; border-bottom:1px solid var(--rule); }
+  .tabbar label { padding:9px 14px; font-size:13.5px; font-weight:bold; color:var(--mute); cursor:pointer;
+                  border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; white-space:nowrap; }
+  .tabbar label:hover { color:var(--ink); background:var(--soft); }
+  .tabs > .panel { display:none; padding-top:6px; }
+  .tabs > .panel > h2:first-child { border-bottom:none; margin-top:14px; }
+  p.lede { color:var(--ink-2); font-size:15px; }
+  @media (max-width: 640px) { .tabbar label { padding:7px 9px; font-size:12.5px; white-space:normal; } }
+  @media print {
+    .tabbar { display:none; }
+    .tabs > .panel { display:block !important; break-before:page; }
+  }
+</style>
+</head>
+<body><main>
+
+<h1>readsieve — code review status</h1>
+<p class="meta">Your 25 Aug review (R1–R6) and 10 Sep follow-up (S1–S3) · branch <code>fix/review-1</code> at <code>d4e5f6a</code>, merged into <code>main</code>, tagged <code>v1.1.0</code> · supersedes the 1 Sep attachment &middot; status as of 2026-09-15</p>
+<div class="demo">Example report. The project (readsieve), the reviewer and every number are invented.</div>
+<div class="tiles"><div class="tile ok" data-status="fixed"><div class="n">6</div><div class="l">fixed: S2, R1, R2, R3, R4, R5</div></div>
+<div class="tile ok" data-status="done"><div class="n">2</div><div class="l">done: S1, R6</div></div>
+<div class="tile bad" data-status="open"><div class="n">1</div><div class="l">open: S3</div></div>
+<div class="tile chg"><div class="n">6</div><div class="l">changed since 2026-09-01</div></div>
+<div class="tile ok"><div class="n">268</div><div class="l">tests, from 212 on 1 Sep</div></div></div>
+<div class="note "><b>All six original findings are closed and v1.1.0 is tagged; the pairing fix moves 3 of 40 pilot samples up one tier, none down.</b> You asked in S1 for the rerun before freezing the pairing fix; it is clean and written up in the <a href="2026-09-14_pairing_findings.html">pairing findings</a>. One item is still open (S3, thread scaling on the cluster).</div>
+<h2>Your 10 Sep follow-up <span class="cnt">S1–S3</span></h2>
+<div class="key"><span><i style="background:var(--bad)"></i>P0 / critical</span><span><i style="background:var(--chg)"></i>P1 / high</span><span><span class="chg-mark">&#9679;</span> changed since 2026-09-01</span></div>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What was done, and how it was verified</th><th>Status</th></tr></thead><tbody>
+<tr class="changed"><td class="id bad" data-label="ID">S1 <span class="chg-mark">&#9679;</span><span class="sev">P0</span></td><td data-label="Asked">Rerun the 40-sample pilot with the pairing fix before freezing it.</td><td data-label="Done">40 / 40 complete; 3 up one tier, 0 down; mates recovered in every sample. <span class="more">&rarr; <a href="2026-09-14_pairing_findings.html">pairing findings</a></span></td><td class="st" data-label="Status"><span class="pill ok" data-status="done">Done</span></td></tr>
+<tr class="changed"><td class="id" data-label="ID">S2 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Add the orphan-read count to the QC table.</td><td data-label="Done">Column <code>orphans_kept</code> added; shown in the cohort report.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>d4e5f6a</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">S3 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Check thread scaling beyond 16 cores.</td><td data-label="Done">Benchmark queued on the 64-core node.</td><td class="st" data-label="Status"><span class="pill bad" data-status="open">Open</span></td></tr>
+</tbody></table></div>
+<h2>Your 25 Aug review <span class="cnt">R1–R6</span></h2>
+<div class="tw"><table class="stack"><thead><tr><th>ID</th><th>What you asked</th><th>What was done, and how it was verified</th><th>Status</th></tr></thead><tbody>
+<tr><td class="id bad" data-label="ID">R1<span class="sev">P0</span></td><td data-label="Asked">Unpaired reads are silently dropped at extraction.</td><td data-label="Done">Unpaired reads now kept and counted; regression test on a synthetic BAM with 10% orphans.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>a1b2c3d</code></td></tr>
+<tr><td class="id bad" data-label="ID">R2<span class="sev">P0</span></td><td data-label="Asked">Host index version is not recorded.</td><td data-label="Done">Index checksum written to the run report; run stops on mismatch.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>b2c3d4e</code></td></tr>
+<tr class="changed"><td class="id chg" data-label="ID">R3 <span class="chg-mark">&#9679;</span><span class="sev">P1</span></td><td data-label="Asked">Paired reads split across chunks lose their mate.</td><td data-label="Done">Fixed and validated on the 40-sample pilot (S1).</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>e5f6a7b</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">R4 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Thread count is hardcoded.</td><td data-label="Done"><code>--threads</code> flag, default from the scheduler allocation.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f6a7b8c</code></td></tr>
+<tr class="changed"><td class="id" data-label="ID">R5 <span class="chg-mark">&#9679;</span></td><td data-label="Asked">Legacy TSV output duplicates the JSON.</td><td data-label="Done">Kept behind <code>--legacy-tsv</code>, off by default, as you decided on 3 Sep.</td><td class="st" data-label="Status"><span class="pill ok" data-status="fixed">Fixed</span><br><code>f6a7b8c</code></td></tr>
+<tr><td class="id" data-label="ID">R6</td><td data-label="Asked">README install steps are out of date.</td><td data-label="Done">Rewritten and tested in a clean container.</td><td class="st" data-label="Status"><span class="pill ok" data-status="done">Done</span><br><code>c3d4e5f</code></td></tr>
+</tbody></table></div>
+<h2>What is running now</h2><ul><li>Thread-scaling benchmark (S3), 8 / 16 / 32 / 64 cores on 4 synthetic samples; results by 17 Sep.</li></ul>
+<h2>Outside your numbered list <span class="cnt">items not yet confirmed, and what else I found</span></h2>
+<div class="tw"><table class="stack"><thead><tr><th>What you flagged, or what I found</th><th>Where it stands</th><th>Status</th></tr></thead><tbody>
+<tr><td data-label="Item">Dead code: <code>legacy_merge()</code> is never called.</td><td data-label="Where">Removal ready; holding until after v1.1.0.</td><td class="st" data-label="Status"><span class="pill park">Deferred</span></td></tr>
+<tr><td data-label="Item">Found while testing: the progress bar miscounts gzip input.</td><td data-label="Where">Cosmetic; fix in the next minor release.</td><td class="st" data-label="Status"><span class="pill bad">Open</span></td></tr>
+</tbody></table></div>
+<details><summary>Commands and paths</summary><pre><code>pytest -q                     # 268 passed
+git log --oneline v1.0.0..v1.1.0 | wc -l   # 14</code></pre></details>
+<footer>Generated 2026-09-15 for readsieve.<br>Contains no patient data, no sample identifiers and no file contents.</footer>
+
+</main></body></html>

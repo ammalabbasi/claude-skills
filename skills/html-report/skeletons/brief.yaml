@@ -1,0 +1,19 @@
+# BRIEF — one screen for someone outside the project (a PI's collaborator, a funder, a committee).
+# At most 4 tiles, about 5 bullets per list, under ~450 words. Prints on one page.
+type: brief
+title: REPLACE brief                     # 2-6 words
+heading: REPLACE — one line on where things stand
+project: REPLACE
+date: REPLACE
+meta: For REPLACE
+tiles:
+  - {n: REPLACE, label: REPLACE, kind: ok}
+summary:
+  headline: REPLACE — the bottom line.
+  body: REPLACE — one or two sentences of support.
+changed:
+  - REPLACE
+next:
+  - REPLACE
+asks:
+  - {ask: REPLACE, detail: REPLACE}

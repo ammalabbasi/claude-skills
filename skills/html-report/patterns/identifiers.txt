@@ -1,0 +1,7 @@
+# LEVEL<TAB>name<TAB>regex — matched against the report's visible text, never printed.
+# Add site-specific identifiers in your own file and pass it with --patterns or $HTML_REPORT_PATTERNS.
+FAIL	DNA/RNA sequence (>= 40 nt)	\b[ACGTUN]{40,}\b
+FAIL	US social security number shape	\b\d{3}-\d{2}-\d{4}\b
+WARN	TCGA barcode (counts are usually enough)	\bTCGA-[A-Z0-9]{2}-[A-Z0-9]{4}\b
+WARN	clinical identifier words (DOB / MRN)	\b(?:DOB|date of birth|MRN|medical record number)\b
+WARN	email address	\b[\w.+-]+@[\w-]+\.[\w.]+\b

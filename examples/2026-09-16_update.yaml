@@ -1,0 +1,33 @@
+type: update
+title: readsieve project update
+heading: readsieve — what changed in v1.1.0, and what it does to the results
+project: readsieve
+date: 2026-09-16
+meta: Update for the steering group · detail by item in the [15 Sep status report](2026-09-15_status.html)
+demo: "Example report. The project (readsieve), the reviewer and every number are invented."
+summary: >-
+  All review findings are fixed and v1.1.0 is tagged. The one change that moves results is the read-pairing fix:
+  on the 40-sample pilot it moves 3 samples up one tier and none down. Everything else is provenance and usability.
+  Thread scaling beyond 16 cores is still being measured. **I need a decision on the default minimum read length.**
+blocks:
+  - h2: Changes to the tool
+  - list:
+      - "**Pairing (R3):** mates split across processing chunks are rejoined; 4% more reads kept on average."
+      - "**Provenance (R2):** the host index checksum is recorded and checked on every run."
+      - "**Usability (R4, R6):** `--threads` flag; install steps tested in a clean container."
+  - h2: Effect on results
+  - note: 3 of 40 pilot samples move up one tier; none move down.
+    headline: "Result:"
+  - table:
+      columns: [Change, Samples affected, Direction]
+      num: [1]
+      rows: [["Pairing fix", "3 / 40", "up one tier"], ["Index checksum", "0 / 40", "none (provenance only)"]]
+  - h2: Cost and time
+  - tiles:
+      - {n: "$42", label: "pilot rerun, compute at list price", kind: info}
+      - {n: "5.5 h", label: "wall time, 40 samples", kind: info}
+open:
+  - Thread scaling beyond 16 cores (S3), results by 17 Sep.
+  - Docker image, after v1.2.
+asks:
+  - {ask: "Choose the default minimum read length: 50 or 70 bp.", detail: "50 keeps 6% more reads; 70 halves the false-positive rate on simulated data. I recommend 70."}

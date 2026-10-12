@@ -1,0 +1,17 @@
+name: test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install pyyaml pytest
+      - run: pytest -q tests
+      - name: examples are up to date
+        run: |
+          cd examples
+          for f in *.yaml; do python ../skills/html-report/scripts/report.py build "$f"; done
+          python ../skills/html-report/scripts/report.py gallery index.html 2026-*.html
+          git diff --exit-code -- .

@@ -1,0 +1,26 @@
+# UPDATE — narrative across several topics, for someone who has not read the status tables.
+# h2 blocks are lettered A., B., C. automatically (set lettered: false to turn off).
+type: update
+title: REPLACE project update             # 2-6 words
+heading: REPLACE — what changed, and what it does to the results
+project: REPLACE
+date: REPLACE
+meta: Update for REPLACE · detail by item in the REPLACE status report
+summary: >-
+  REPLACE — five sentences: what is done, the one change that moves results and by how much,
+  what does not change, what is still being tested, and what you need from them.
+blocks:
+  - h2: REPLACE topic
+  - list:
+      - "**REPLACE:** REPLACE, in plain terms."
+  - h2: REPLACE topic
+  - note: REPLACE — the one-line result of this section.
+    headline: "Result:"
+  - table:
+      columns: [REPLACE, REPLACE, REPLACE]
+      num: [2]
+      rows: [[REPLACE, REPLACE, REPLACE]]
+open:
+  - REPLACE
+asks:
+  - {ask: REPLACE — the decision., detail: REPLACE — cost, time, or what happens if not.}
