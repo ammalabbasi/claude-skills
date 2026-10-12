@@ -33,7 +33,7 @@ TOP_KEYS = {"type", "title", "heading", "project", "date", "meta", "audience", "
             # findings
             "question", "answer", "tested", "found", "limits", "reproduce",
             # update / brief
-            "areas", "asks", "changed", "next"}
+            "areas", "asks", "changed", "changed_title", "next"}
 
 
 def esc(s):
@@ -310,7 +310,7 @@ def blocks(spec, out):
     render(spec.get("blocks") or [])
     if spec["type"] == "brief":
         if spec.get("changed"):
-            out.append("<h2>What changed</h2>" + ul(spec["changed"]))
+            out.append(f"<h2>{md(spec.get('changed_title', 'What changed'))}</h2>" + ul(spec["changed"]))
         if spec.get("next"):
             out.append("<h2>Next</h2>" + ul(spec["next"]))
     if spec.get("asks"):
@@ -346,6 +346,8 @@ def build(spec):
     else:
         if spec.get("tiles"):
             out.append('<div class="tiles">' + "".join(tile(x["n"], x["label"], x.get("kind", "")) for x in spec["tiles"]) + "</div>")
+        if typ == "brief" and spec.get("bottom_line"):
+            spec["summary"] = {"headline": "Bottom line.", "body": spec["bottom_line"]}
         if typ == "update":
             if isinstance(spec.get("summary"), str):
                 spec["summary"] = {"headline": "In one paragraph.", "body": spec["summary"], "kind": "ok"}
@@ -403,7 +405,7 @@ def gallery(out_path, pages):
         rel = pathlib.Path(p).resolve().relative_to(pathlib.Path(out_path).resolve().parent)
         rows.append([f"[{title.group(1) if title else p}]({rel})", typ.group(1) if typ else ""])
     spec = {"type": "brief", "title": "html-report examples", "privacy": False, "_dir": pathlib.Path("."),
-            "meta": "Rendered from the YAML specs next to each file. Project, people and numbers are invented.",
+            "meta": "Rendered from the YAML specs next to each file. Real reports, cleaned for sharing; numbers are placeholders.",
             "blocks": [{"table": {"columns": ["Report", "Type"], "rows": rows}}]}
     pathlib.Path(out_path).write_text(build(spec))
 

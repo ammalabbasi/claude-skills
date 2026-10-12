@@ -151,3 +151,14 @@ def test_findings_has_five_parts_in_order(examples):
     assert pos == sorted(pos)
     assert s.count("<h3>") == 3 and "<svg class=\"bars\"" in s
     assert "How to reproduce" not in s  # optional, off unless given
+
+
+def test_brief_is_one_screen(examples):
+    s = (examples / "2026-10-08_brief.html").read_text()
+    assert len(re.findall(r'<div class="tile[ "]', s)) == 3 and "<b>Bottom line.</b>" in s
+    assert "<h2>What we found</h2>" in s and 'class="tabs"' not in s
+
+
+def test_checker_warns_on_long_brief(tmp_path):
+    out = build(tmp_path, {"type": "brief", "title": "a long brief", "changed": ["a", "b", "c", "d"]})
+    assert any("longer than 3" in w for w in checker.check(out, PATTERNS)[3])

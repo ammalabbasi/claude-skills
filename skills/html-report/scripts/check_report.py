@@ -73,10 +73,12 @@ def check(path, patterns):
     if typ == "brief":
         if 'class="tabs"' in text:
             warns.append("brief uses tabs; a brief should fit one screen without them")
-        if len(re.findall(r'<div class="tile', text)) > 4:
-            warns.append("brief has more than 4 tiles")
-        if len(visible.split()) > 450:
-            warns.append(f"brief is {len(visible.split())} words; aim for one screen (<450)")
+        if len(re.findall(r'<div class="tile[ "]', text)) > 3:
+            warns.append("brief has more than 3 boxes")
+        if any(len(re.findall(r"<li>", u)) > 3 for u in re.findall(r"<ul>.*?</ul>", text, re.S)):
+            warns.append("brief has a list longer than 3 bullets")
+        if len(visible.split()) > 350:
+            warns.append(f"brief is {len(visible.split())} words; aim for one screen (<350)")
 
     for level, name, rx in patterns:
         hits = set(rx.findall(visible))

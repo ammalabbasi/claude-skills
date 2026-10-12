@@ -43,9 +43,9 @@ Claude hands back the path to the HTML file. Read it, then attach it yourself.
 | `status` | **"Did you do what I asked?"** Sent after a round of fixes. One table per document the reviewer sent, in their numbering; Fixed / In progress / Open / Won't do; ● marks what changed since last time. | [real report, cleaned](examples/2026-10-05_status.html) |
 | `findings` | **"What did this one experiment show?"** The question, the answer, what I tested, what I found, then limits and next steps. | [real report, cleaned](examples/2026-09-30_aligner_findings.html) |
 | `update` | **"What's going on across my projects, and what do you need from me?"** The periodic email: one tab per area, each with its asks at the foot. | [real report, cleaned](examples/2026-09-18_update.html) |
-| `brief` | One screen for people outside the project | [committee brief](examples/2026-09-17_brief.html) |
+| `brief` | **"Where are things, in one screen?"** For people outside the project: up to 3 boxes, a bottom line, what changed, what's next. | [real brief, cleaned](examples/2026-10-08_brief.html) |
 
-The examples use an invented "Example project"; every number in them is made up. GitHub shows
+The examples are real reports, cleaned for sharing: names, cohorts and unpublished specifics are anonymised and every number is a placeholder (each page says what was changed). GitHub shows
 HTML as source code, so to see them rendered, either clone the repo and open `examples/index.html`, or
 turn on GitHub Pages for the repo (Settings → Pages → deploy from `main`, root folder) and go to
 `https://ammalabbasi.github.io/claude-skills/examples/`.

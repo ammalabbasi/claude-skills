@@ -1,6 +1,6 @@
 ---
 name: html-report
-description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status ("did you do what I asked?" — one table per document the reviewer sent, in their numbering), findings ("what did this one experiment show?" — question, answer, tested, found, limits), update ("what is going on and what do you need from me?" — the periodic email, one tab per area with asks at the foot), brief (one screen for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
+description: Build single-file, light-only HTML reports for a PI, reviewer or collaborator from a YAML spec — four types - status ("did you do what I asked?" — one table per document the reviewer sent, in their numbering), findings ("what did this one experiment show?" — question, answer, tested, found, limits), update ("what is going on and what do you need from me?" — the periodic email, one tab per area with asks at the foot), brief ("where are things, in one screen?" — for people outside the project). Use when asked for a status/fix report, an email attachment summarising progress, a write-up of a validation, a project update, or a one-page brief.
 ---
 
 # html-report
@@ -20,7 +20,7 @@ identifier patterns (`$HTML_REPORT_PATTERNS`). Local rules override this file wh
 | `status` | "Did you do what I asked?" | After a round of fixes, back to the person who gave you the list. One table per document they sent, in their numbering. |
 | `findings` | "What did this one experiment show?" | When a single result needs more than a line in a status table; link it from that row. |
 | `update` | "What's going on across my projects, and what do you need from me?" | The periodic email. One tab per area, each with its asks at the foot; one area means no tabs. |
-| `brief` | "Where are we, in one screen?" | Readers outside the project: a committee, a funder, a PI's collaborator. ≤4 tiles, ~450 words. |
+| `brief` | "Where are things, in one screen?" | For people outside the project. Plain language, no IDs or hashes, at most 3 boxes and 3 bullets per list. |
 
 Do not mix them: an analysis bolted onto a status report is a `findings` report waiting to be split out.
 
@@ -77,7 +77,9 @@ Optional `reproduce` (commands, folded at the bottom; strip it before sharing ou
 `{label, heading, summary, blocks, asks}`. More than one area renders as CSS-only tabs (print shows every
 panel); a single area renders without tabs. Keep each area to a few bullets or one table.
 
-**brief:** `changed`, `next`, `asks`.
+**brief** — `tiles` (at most 3), `bottom_line` (two sentences), `changed` (at most 3 bullets; rename the
+heading with `changed_title`, e.g. "What we found"), `next` (at most 3), optional `asks`. No tabs, item IDs or
+commit hashes; the checker warns when a brief outgrows one screen.
 
 **Blocks:** `h2` (+`sub`), `h3`, `p`, `note` (+`headline`, `kind`), `list` (+`ordered`), `tiles`,
 `table` (`{columns, rows, num, caption}`), `tabs` (list of `{label, heading, summary, blocks, asks}`,

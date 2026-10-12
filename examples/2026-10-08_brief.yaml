@@ -1,0 +1,26 @@
+# Real brief (8 Oct 2026), cleaned for sharing. See the banner text below for what was changed.
+type: brief
+title: Alignment setting brief
+heading: How one alignment setting hides microbial reads in Cohort A
+project: pksProfiler
+date: 2026-10-08
+context: For two collaborators outside the lab
+demo: >-
+  Real brief from 8 Oct 2026, cleaned for sharing: recipients, cohort and aligner setting anonymised; one result and a
+  claim about published work removed; every number replaced with a placeholder.
+tiles:
+  - {n: "~96%", label: of the cohort's files use the strict setting, kind: info}
+  - {n: "~4×", label: more microbial reads per tumour once recovered, kind: ok}
+  - {n: "~1.5×", label: in matched normals, kind: info}
+bottom_line: >-
+  Cohort A was aligned with a setting that counts even a short partial match to the human genome as human, so
+  microbiome studies built on its unmapped reads miss part of the microbial signal. Adding back the low-scoring reads
+  recovers it, and those reads are mostly not human.
+changed_title: What we found
+changed:
+  - "In simulation, the strict setting hid a large share of bacterial reads; the default setting and other common aligners hid almost none."
+  - "The files' own headers confirm the setting for nearly every file in the cohort."
+  - "On real samples, the recovered reads look nothing like human reads, and microbial reads rise several-fold in tumours but only slightly in normals."
+next:
+  - "Build the recovery into our pipelines and rerun the affected cohort."
+  - "Until then, read microbiome results built on this cohort's unmapped reads as conservative."
